@@ -40,7 +40,19 @@ export function CoverScene({
   );
 }
 
-export function StoryScene({ showLayers }: { showLayers: boolean }) {
+export function StoryScene({
+  showLayers,
+  onGoCover,
+  onGoMap,
+  onToggleFullscreen,
+  fullscreenActive,
+}: {
+  showLayers: boolean;
+  onGoCover: () => void;
+  onGoMap: () => void;
+  onToggleFullscreen: () => void;
+  fullscreenActive: boolean;
+}) {
   const [started, setStarted] = useState(false);
   const [momentIndex, setMomentIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -97,129 +109,157 @@ export function StoryScene({ showLayers }: { showLayers: boolean }) {
   }
 
   return (
-    <Scene src={originals.story} aspect={aspects.story} letterbox={letterbox.story} alt="">
-      {(rect) => (
-        <>
-          {showLayers
-            ? storyLayers.map((layer) => (
+    <div className="relative h-full w-full">
+      <Scene src={originals.story} aspect={aspects.story} letterbox={letterbox.story} alt="">
+        {(rect) => (
+          <>
+            {showLayers
+              ? storyLayers.map((layer) => (
+                  <img
+                    key={layer.id}
+                    src={layer.file}
+                    alt=""
+                    className="absolute max-w-none pointer-events-none"
+                    style={{
+                      left: rect.x + layer.x * rect.w,
+                      top: rect.y + layer.y * rect.h,
+                      width: layer.w * rect.w,
+                      height: layer.h * rect.h,
+                      zIndex: layer.z,
+                    }}
+                  />
+                ))
+              : null}
+
+            {!started ? (
+              <>
                 <img
-                  key={layer.id}
-                  src={layer.file}
-                  alt=""
-                  className="absolute max-w-none pointer-events-none"
+                  src={storyStartImage}
+                  alt="Composición inicial del cuento"
+                  className="absolute max-w-none object-cover"
                   style={{
-                    left: rect.x + layer.x * rect.w,
-                    top: rect.y + layer.y * rect.h,
-                    width: layer.w * rect.w,
-                    height: layer.h * rect.h,
-                    zIndex: layer.z,
+                    left: rect.x,
+                    top: rect.y,
+                    width: rect.w,
+                    height: rect.h,
+                    zIndex: 5,
                   }}
                 />
-              ))
-            : null}
-
-          {!started ? (
-            <>
-              <img
-                src={storyStartImage}
-                alt="Composición inicial del cuento"
-                className="absolute max-w-none object-cover"
-                style={{
-                  left: rect.x,
-                  top: rect.y,
-                  width: rect.w,
-                  height: rect.h,
-                  zIndex: 5,
-                }}
-              />
-              <button
-                type="button"
-                className="absolute z-20 rounded-full bg-white/20 backdrop-blur-sm px-6 py-3 text-xl font-extrabold text-white shadow-lg border border-white/30"
-                style={{
-                  left: rect.x + rect.w * 0.5 - 120,
-                  top: rect.y + rect.h * 0.78,
-                }}
-                onClick={startStory}
-              >
-                Comenzar cuento
-              </button>
-            </>
-          ) : (
-            <>
-              <video
-                ref={videoDRef}
-                src={moment.videoD}
-                muted
-                playsInline
-                className="absolute max-w-none object-cover pointer-events-none"
-                style={{
-                  left: rect.x + rect.w * 0.5,
-                  top: rect.y + rect.h * 0.5,
-                  width: rect.w * 0.5,
-                  height: rect.h * 0.5,
-                  zIndex: 6,
-                }}
-                onEnded={() => setPlaying(false)}
-              />
-
-              {moment.videoC ? (
+                <button
+                  type="button"
+                  className="absolute z-30 rounded-full bg-white/15 backdrop-blur-md px-8 py-4 text-2xl font-extrabold text-white shadow-lg border border-white/20"
+                  style={{
+                    left: rect.x + rect.w * 0.5 - 140,
+                    top: rect.y + rect.h * 0.78,
+                  }}
+                  onClick={startStory}
+                >
+                  Comenzar cuento
+                </button>
+              </>
+            ) : (
+              <>
                 <video
-                  ref={videoCRef}
-                  src={moment.videoC}
+                  ref={videoDRef}
+                  src={moment.videoD}
                   muted
                   playsInline
                   className="absolute max-w-none object-cover pointer-events-none"
                   style={{
-                    left: rect.x,
+                    left: rect.x + rect.w * 0.5,
                     top: rect.y + rect.h * 0.5,
                     width: rect.w * 0.5,
                     height: rect.h * 0.5,
                     zIndex: 6,
                   }}
+                  onEnded={() => setPlaying(false)}
                 />
-              ) : null}
 
-              {/* Texto grande blanco sin fondo */}
-              <div
-                className="absolute z-10 overflow-auto p-4 text-white text-2xl md:text-3xl font-bold leading-tight drop-shadow-lg"
-                style={{
-                  left: rect.x + rect.w * 0.04,
-                  top: rect.y + rect.h * 0.04,
-                  width: rect.w * 0.45,
-                  height: rect.h * 0.4,
-                  textShadow: "0 2px 8px rgba(0,0,0,0.7)",
-                }}
-              >
-                <p>{moment.text}</p>
-              </div>
+                {moment.videoC ? (
+                  <video
+                    ref={videoCRef}
+                    src={moment.videoC}
+                    muted
+                    playsInline
+                    className="absolute max-w-none object-cover pointer-events-none"
+                    style={{
+                      left: rect.x,
+                      top: rect.y + rect.h * 0.5,
+                      width: rect.w * 0.5,
+                      height: rect.h * 0.5,
+                      zIndex: 6,
+                    }}
+                  />
+                ) : null}
 
-              {/* Controles discretos sin bordes */}
-              <div
-                className="absolute z-20 flex gap-3"
-                style={{
-                  left: rect.x + rect.w * 0.04,
-                  top: rect.y + rect.h * 0.48,
-                }}
-              >
-                {momentIndex > 0 && (
-                  <button type="button" className="text-white/90 text-base font-semibold hover:text-white bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full" onClick={prev}>
-                    Volver
-                  </button>
-                )}
-                <button type="button" className="text-white/90 text-base font-semibold hover:text-white bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full" onClick={repeat}>
-                  Repetir
-                </button>
-                {!isLast && (
-                  <button type="button" className="text-white font-bold bg-white/20 backdrop-blur-sm px-5 py-2 rounded-full hover:bg-white/30" onClick={next}>
-                    Siguiente
-                  </button>
-                )}
-              </div>
-            </>
+                {/* Texto con degradado suave */}
+                <div
+                  className="absolute z-10 p-6 text-white text-2xl md:text-3xl lg:text-4xl font-bold leading-tight"
+                  style={{
+                    left: rect.x + rect.w * 0.03,
+                    top: rect.y + rect.h * 0.03,
+                    width: rect.w * 0.48,
+                    maxHeight: rect.h * 0.38,
+                    background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.15) 70%, transparent 100%)",
+                    borderRadius: "1rem",
+                    textShadow: "0 2px 6px rgba(0,0,0,0.6)",
+                  }}
+                >
+                  <p>{moment.text}</p>
+                </div>
+              </>
+            )}
+          </>
+        )}
+      </Scene>
+
+      {/* Controles superiores discretos */}
+      <button
+        type="button"
+        className="absolute top-4 left-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
+        onClick={onGoCover}
+      >
+        Volver al inicio
+      </button>
+      <button
+        type="button"
+        className="absolute top-4 right-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
+        onClick={onToggleFullscreen}
+        aria-label={fullscreenActive ? "Salir de pantalla completa" : "Ampliar pantalla"}
+      >
+        {fullscreenActive ? "Salir" : "Ampliar"}
+      </button>
+
+      {/* Controles inferiores */}
+      {started && (
+        <div className="absolute bottom-6 left-0 right-0 z-40 flex items-center justify-between px-6">
+          <button
+            type="button"
+            className="text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-5 py-3 rounded-full text-lg font-semibold"
+            onClick={repeat}
+          >
+            Repetir
+          </button>
+          {!isLast ? (
+            <button
+              type="button"
+              className="text-white font-bold bg-white/25 backdrop-blur-md px-7 py-3 rounded-full text-lg hover:bg-white/35"
+              onClick={next}
+            >
+              Siguiente
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="text-white font-bold bg-white/25 backdrop-blur-md px-7 py-3 rounded-full text-lg hover:bg-white/35"
+              onClick={onGoMap}
+            >
+              Ir al mapa
+            </button>
           )}
-        </>
+        </div>
       )}
-    </Scene>
+    </div>
   );
 }
 
