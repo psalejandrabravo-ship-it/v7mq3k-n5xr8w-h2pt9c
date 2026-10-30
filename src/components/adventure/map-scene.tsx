@@ -12,6 +12,7 @@ import {
   trailPathD,
   type Pt,
 } from "@/game/map-config";
+import { TOTAL_MISSIONS } from "@/game/progress";
 import { Scene, type SceneRect } from "./scene";
 
 type MapSceneProps = {
@@ -87,7 +88,7 @@ export function MapScene({ completed, pending, onFinishMove, onOpenMission, onOp
               onOpen={() => onOpenMission(stop.order)}
             />
           ))}
-          <ChestMark rect={rect} enabled={completed === 6 && !moving} onOpen={onOpenChest} />
+          <ChestMark rect={rect} enabled={completed === TOTAL_MISSIONS && !moving} onOpen={onOpenChest} />
         </>
       )}
     </Scene>
