@@ -1,10 +1,6 @@
 /**
- * Mapa 111247.jpg. Coordenadas normalizadas (0–1) sobre la imagen completa,
- * medidas en este archivo, no copiadas de un mapa anterior.
- *
- * El trazado es sinuoso: sube, cruza hacia la derecha, baja por el borde
- * y regresa por la arena inferior hasta el cofre. Las misiones siguen
- * un orden fijo; la curva no habilita elegirlas.
+ * Mapa 111247.jpg. Coordenadas normalizadas (0–1).
+ * Ahora 5 misiones + cofre.
  */
 
 export type Pt = { x: number; y: number };
@@ -18,16 +14,13 @@ export const stops: { order: number; at: Pt }[] = [
   { order: 3, at: { x: 0.544, y: 0.354 } },
   { order: 4, at: { x: 0.81, y: 0.27 } },
   { order: 5, at: { x: 0.876, y: 0.614 } },
-  { order: 6, at: { x: 0.642, y: 0.818 } },
 ];
 
-/** Punto final del cofre, después de la misión 6. */
+/** Punto final del cofre, después de la misión 5. */
 export const chestPoint: Pt = { x: 0.318, y: 0.82 };
 
 /**
- * Descanso del pirata según misiones completadas (0 a 6).
- * El 0 está junto a la parada 1, sin cubrir su botón.
- * El 6 está junto al cofre.
+ * Descanso del pirata según misiones completadas (0 a 5).
  */
 export const pirateRests: Pt[] = [
   { x: 0.399, y: 0.604 },
@@ -35,7 +28,6 @@ export const pirateRests: Pt[] = [
   { x: 0.604, y: 0.329 },
   { x: 0.852, y: 0.298 },
   { x: 0.895, y: 0.66 },
-  { x: 0.688, y: 0.799 },
   { x: 0.276, y: 0.848 },
 ];
 
@@ -45,7 +37,6 @@ export const legBends: Pt[] = [
   { x: 0.515, y: 0.376 },
   { x: 0.732, y: 0.343 },
   { x: 0.9, y: 0.48 },
-  { x: 0.836, y: 0.796 },
   { x: 0.478, y: 0.794 },
 ];
 
