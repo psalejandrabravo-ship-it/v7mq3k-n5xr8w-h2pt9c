@@ -1,7 +1,6 @@
 /**
  * Cuento inicial — ¡Tripulación, juntos al tesoro!
  * Textos de narración y URLs directas de video (Grok Imagine).
- * Nota: idealmente reemplazar por archivos locales más adelante.
  */
 
 export type StoryMoment = {
@@ -37,7 +36,7 @@ export const storyMoments: StoryMoment[] = [
   },
   {
     id: 5,
-    text: "Llegó la tripulación. Juntos recogieron los fragmentos del mapa y se los entregaron al pirata.",
+    text: "Llegó la tripulación. Ellos lo ayudarán a recorrer la isla y encontrar los fragmentos del mapa. Con su ayuda podrá lograrlo.",
     videoD: "https://assets.grok.com/users/47885d9f-3cbb-4e29-ba84-f0b2ff3065d1/generated/842e0e11-85a9-4006-9445-a885a20bf4f5/generated_video.mp4?cache=1",
   },
   {

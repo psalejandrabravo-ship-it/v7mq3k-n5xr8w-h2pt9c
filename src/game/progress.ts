@@ -1,5 +1,6 @@
 export const SAVE_KEY = "mirarim-tripulacion-avance";
 export const SAVE_VERSION = 1 as const;
+export const TOTAL_MISSIONS = 5;
 
 export type ScreenName = "cover" | "story" | "map" | "mission" | "chest" | "video";
 
@@ -37,27 +38,27 @@ export function sanitize(raw: unknown): { save: Save; notice: string | null } {
     return { save: empty, notice: "El avance guardado no se pudo leer. Se empezó de nuevo." };
   }
   const completed = o.completed;
-  if (typeof completed !== "number" || !Number.isInteger(completed) || completed < 0 || completed > 6) {
+  if (typeof completed !== "number" || !Number.isInteger(completed) || completed < 0 || completed > TOTAL_MISSIONS) {
     return { save: empty, notice: "El avance guardado no se pudo leer. Se empezó de nuevo." };
   }
   let notice: string | null = null;
   let chestOpen = o.chestOpen === true;
-  if (chestOpen && completed < 6) {
+  if (chestOpen && completed < TOTAL_MISSIONS) {
     chestOpen = false;
-    notice = "El cofre estaba abierto sin las seis misiones. Se dejó cerrado.";
+    notice = `El cofre estaba abierto sin las ${TOTAL_MISSIONS} misiones. Se dejó cerrado.`;
   }
   let screen: ScreenName = SCREENS.includes(o.screen as ScreenName) ? (o.screen as ScreenName) : completed > 0 ? "map" : "cover";
   let missionOrder = typeof o.missionOrder === "number" ? o.missionOrder : 1;
   if (screen === "mission") {
-    if (missionOrder !== completed + 1 || missionOrder < 1 || missionOrder > 6) {
+    if (missionOrder !== completed + 1 || missionOrder < 1 || missionOrder > TOTAL_MISSIONS) {
       screen = "map";
       missionOrder = 1;
     }
   } else {
     missionOrder = 1;
   }
-  if (screen === "chest" && completed < 6) screen = "map";
-  if (screen === "video" && !(completed === 6 && chestOpen)) screen = completed === 6 ? "chest" : "map";
+  if (screen === "chest" && completed < TOTAL_MISSIONS) screen = "map";
+  if (screen === "video" && !(completed === TOTAL_MISSIONS && chestOpen)) screen = completed === TOTAL_MISSIONS ? "chest" : "map";
   return {
     save: { version: SAVE_VERSION, completed, chestOpen, screen, missionOrder },
     notice,
