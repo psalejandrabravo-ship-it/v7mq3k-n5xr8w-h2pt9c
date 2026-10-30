@@ -48,7 +48,7 @@ export const storyMoments: StoryMoment[] = [
 ];
 
 /** Imagen de composición inicial antes de comenzar */
-export const storyStartImage = "/recursos/cuento-pirata.png";
+export const storyStartImage = "/recursos/cuento_pirata.png";
 
 /** Compatibilidad */
 export const storyParagraphs: string[] | null = storyMoments.map((m) => m.text);
