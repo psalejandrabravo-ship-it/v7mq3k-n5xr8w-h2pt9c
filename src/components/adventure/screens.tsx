@@ -10,33 +10,99 @@ import { Logo } from "./chrome";
 export function CoverScene({
   logoSrc,
   headingRef,
+  onStart,
+  onContinue,
+  onStory,
+  onReset,
+  onLogo,
+  onToggleFullscreen,
+  fullscreenActive,
+  hasProgress,
 }: {
   logoSrc: string | null;
   headingRef: RefObject<HTMLHeadingElement | null>;
+  onStart: () => void;
+  onContinue: () => void;
+  onStory: () => void;
+  onReset: () => void;
+  onLogo: () => void;
+  onToggleFullscreen: () => void;
+  fullscreenActive: boolean;
+  hasProgress: boolean;
 }) {
   return (
-    <Scene
-      src={originals.cover}
-      aspect={aspects.cover}
-      letterbox={letterbox.cover}
-      alt="Niñas y niños de la tripulación tiran juntos de una cuerda en la cubierta de un barco."
-    >
-      {(rect) => (
-        <div
-          className="absolute z-10 rounded-3xl bg-foam/95 px-5 py-4 text-center shadow-lg"
-          style={{
-            left: rect.x + rect.w * 0.08,
-            top: rect.y + rect.h * 0.06,
-            width: Math.min(rect.w * 0.84, 640),
-          }}
-        >
-          <Logo src={logoSrc} variant="color" className="mx-auto h-16 w-56" />
-          <h1 ref={headingRef} tabIndex={-1} className="mt-2 text-3xl font-extrabold text-indigo outline-none md:text-4xl">
-            ¡Tripulación, juntos al tesoro!
-          </h1>
-        </div>
-      )}
-    </Scene>
+    <div className="relative h-full w-full">
+      <Scene
+        src={originals.cover}
+        aspect={aspects.cover}
+        letterbox={letterbox.cover}
+        alt="Niñas y niños de la tripulación tiran juntos de una cuerda en la cubierta de un barco."
+      >
+        {(rect) => (
+          <div
+            className="absolute z-10 text-center"
+            style={{
+              left: rect.x + rect.w * 0.5 - 200,
+              top: rect.y + rect.h * 0.08,
+              width: 400,
+            }}
+          >
+            <Logo src={logoSrc} variant="color" className="mx-auto h-14 w-48" />
+            <h1 ref={headingRef} tabIndex={-1} className="mt-3 text-3xl font-extrabold text-white outline-none drop-shadow-lg md:text-4xl" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.6)" }}>
+              ¡Tripulación, juntos al tesoro!
+            </h1>
+          </div>
+        )}
+      </Scene>
+
+      {/* Controles superiores */}
+      <button
+        type="button"
+        className="absolute top-4 left-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
+        onClick={onLogo}
+      >
+        Logotipo
+      </button>
+      <button
+        type="button"
+        className="absolute top-4 right-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
+        onClick={onToggleFullscreen}
+        aria-label={fullscreenActive ? "Salir de pantalla completa" : "Ampliar pantalla"}
+      >
+        {fullscreenActive ? "Salir" : "Ampliar"}
+      </button>
+
+      {/* Acción principal inferior */}
+      <div className="absolute bottom-8 left-0 right-0 z-40 flex flex-col items-center gap-3">
+        {hasProgress ? (
+          <>
+            <button
+              type="button"
+              className="text-white font-bold bg-white/25 backdrop-blur-md px-8 py-4 rounded-full text-xl hover:bg-white/35"
+              onClick={onContinue}
+            >
+              Continuar aventura
+            </button>
+            <div className="flex gap-3">
+              <button type="button" className="text-white/90 bg-black/30 backdrop-blur-sm px-5 py-2 rounded-full text-base" onClick={onStory}>
+                Ver el cuento
+              </button>
+              <button type="button" className="text-white/90 bg-black/30 backdrop-blur-sm px-5 py-2 rounded-full text-base" onClick={onReset}>
+                Reiniciar
+              </button>
+            </div>
+          </>
+        ) : (
+          <button
+            type="button"
+            className="text-white font-bold bg-white/25 backdrop-blur-md px-10 py-4 rounded-full text-xl hover:bg-white/35"
+            onClick={onStart}
+          >
+            Comenzar aventura
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -192,7 +258,6 @@ export function StoryScene({
                   />
                 ) : null}
 
-                {/* Texto con degradado suave */}
                 <div
                   className="absolute z-10 p-6 text-white text-2xl md:text-3xl lg:text-4xl font-bold leading-tight"
                   style={{
@@ -213,7 +278,6 @@ export function StoryScene({
         )}
       </Scene>
 
-      {/* Controles superiores discretos */}
       <button
         type="button"
         className="absolute top-4 left-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
@@ -230,7 +294,6 @@ export function StoryScene({
         {fullscreenActive ? "Salir" : "Ampliar"}
       </button>
 
-      {/* Controles inferiores */}
       {started && (
         <div className="absolute bottom-6 left-0 right-0 z-40 flex items-center justify-between px-6">
           <button
@@ -263,33 +326,78 @@ export function StoryScene({
   );
 }
 
-export function MissionScene({ order }: { order: number }) {
+export function MissionScene({
+  order,
+  onComplete,
+  onMap,
+  onToggleFullscreen,
+  fullscreenActive,
+  busy,
+}: {
+  order: number;
+  onComplete: () => void;
+  onMap: () => void;
+  onToggleFullscreen: () => void;
+  fullscreenActive: boolean;
+  busy: boolean;
+}) {
   const slot = missionSlot(order);
   return (
-    <Scene src={originals.beach} aspect={aspects.beach} letterbox={letterbox.beach} alt="">
-      {(rect) =>
-        slot.instructions ? (
-          <div
-            className="absolute z-10 overflow-auto rounded-3xl bg-foam/95 p-4 text-lg text-ink shadow-lg"
-            style={{
-              left: rect.x + rect.w * 0.08,
-              top: rect.y + rect.h * 0.72,
-              width: rect.w * 0.84,
-              height: rect.h * 0.24,
-            }}
-          >
-            {slot.instructions}
-          </div>
-        ) : (
-          <p
-            className="absolute z-10 -translate-x-1/2 rounded-full bg-foam/92 px-4 py-2 text-center text-base font-bold text-sea shadow"
-            style={{ left: rect.x + rect.w / 2, top: rect.y + 12 }}
-          >
-            Contenido de esta misión pendiente.
-          </p>
-        )
-      }
-    </Scene>
+    <div className="relative h-full w-full">
+      <Scene src={originals.beach} aspect={aspects.beach} letterbox={letterbox.beach} alt="">
+        {(rect) =>
+          slot.instructions ? (
+            <div
+              className="absolute z-10 p-4 text-white text-lg font-medium"
+              style={{
+                left: rect.x + rect.w * 0.06,
+                bottom: rect.y + 80,
+                width: rect.w * 0.55,
+                background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 80%, transparent 100%)",
+                borderRadius: "1rem",
+                textShadow: "0 1px 4px rgba(0,0,0,0.7)",
+              }}
+            >
+              {slot.instructions}
+            </div>
+          ) : (
+            <p
+              className="absolute z-10 text-white text-base font-bold drop-shadow"
+              style={{ left: rect.x + rect.w / 2 - 120, top: rect.y + 24 }}
+            >
+              Contenido de esta misión pendiente.
+            </p>
+          )
+        }
+      </Scene>
+
+      <button
+        type="button"
+        className="absolute top-4 left-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
+        onClick={onMap}
+      >
+        Volver al mapa
+      </button>
+      <button
+        type="button"
+        className="absolute top-4 right-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
+        onClick={onToggleFullscreen}
+        aria-label={fullscreenActive ? "Salir de pantalla completa" : "Ampliar pantalla"}
+      >
+        {fullscreenActive ? "Salir" : "Ampliar"}
+      </button>
+
+      <div className="absolute bottom-6 right-6 z-40">
+        <button
+          type="button"
+          className="text-white font-bold bg-white/25 backdrop-blur-md px-6 py-3 rounded-full text-lg hover:bg-white/35 disabled:opacity-50"
+          disabled={busy}
+          onClick={onComplete}
+        >
+          Completar misión
+        </button>
+      </div>
+    </div>
   );
 }
 
