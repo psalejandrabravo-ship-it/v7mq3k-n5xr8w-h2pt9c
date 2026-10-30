@@ -1,6 +1,6 @@
-import { type RefObject } from "react";
+import { useState, useRef, useEffect, type RefObject } from "react";
 import { anchors, aspects, derived, letterbox, originals } from "@/game/assets";
-import { storyParagraphs } from "@/content/story";
+import { storyMoments, storyStartImage } from "@/content/story";
 import { missionSlot } from "@/content/missions";
 import { learningVideo } from "@/content/video";
 import { storyLayers } from "@/game/story-config";
@@ -41,7 +41,61 @@ export function CoverScene({
 }
 
 export function StoryScene({ showLayers }: { showLayers: boolean }) {
-  const paragraphs = storyParagraphs;
+  const [started, setStarted] = useState(false);
+  const [momentIndex, setMomentIndex] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const videoDRef = useRef<HTMLVideoElement>(null);
+  const videoCRef = useRef<HTMLVideoElement>(null);
+
+  const moment = storyMoments[momentIndex];
+  const isLast = momentIndex === storyMoments.length - 1;
+
+  useEffect(() => {
+    if (!started || !playing) return;
+    const d = videoDRef.current;
+    const c = videoCRef.current;
+    if (d) {
+      d.currentTime = 0;
+      void d.play().catch(() => {});
+    }
+    if (c) {
+      c.currentTime = 0;
+      void c.play().catch(() => {});
+    }
+  }, [started, playing, momentIndex]);
+
+  function startStory() {
+    setStarted(true);
+    setPlaying(true);
+    setMomentIndex(0);
+  }
+
+  function next() {
+    if (isLast) return;
+    setMomentIndex((i) => i + 1);
+    setPlaying(true);
+  }
+
+  function prev() {
+    if (momentIndex === 0) return;
+    setMomentIndex((i) => i - 1);
+    setPlaying(true);
+  }
+
+  function repeat() {
+    setPlaying(true);
+    const d = videoDRef.current;
+    const c = videoCRef.current;
+    if (d) {
+      d.currentTime = 0;
+      void d.play().catch(() => {});
+    }
+    if (c) {
+      c.currentTime = 0;
+      void c.play().catch(() => {});
+    }
+  }
+
   return (
     <Scene src={originals.story} aspect={aspects.story} letterbox={letterbox.story} alt="">
       {(rect) => (
@@ -52,7 +106,7 @@ export function StoryScene({ showLayers }: { showLayers: boolean }) {
                   key={layer.id}
                   src={layer.file}
                   alt=""
-                  className="absolute max-w-none"
+                  className="absolute max-w-none pointer-events-none"
                   style={{
                     left: rect.x + layer.x * rect.w,
                     top: rect.y + layer.y * rect.h,
@@ -63,23 +117,117 @@ export function StoryScene({ showLayers }: { showLayers: boolean }) {
                 />
               ))
             : null}
-          {paragraphs && paragraphs.length > 0 ? (
-            <div
-              className="absolute z-10 overflow-auto rounded-3xl bg-foam/95 p-4 text-lg text-ink shadow-lg"
-              style={{
-                left: rect.x + rect.w * 0.06,
-                top: rect.y + rect.h * 0.72,
-                width: rect.w * 0.88,
-                height: rect.h * 0.25,
-              }}
-            >
-              {paragraphs.map((paragraph) => (
-                <p key={paragraph} className="mb-2">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
-          ) : null}
+
+          {!started ? (
+            <>
+              <img
+                src={storyStartImage}
+                alt="Composición inicial del cuento"
+                className="absolute max-w-none object-cover"
+                style={{
+                  left: rect.x,
+                  top: rect.y,
+                  width: rect.w,
+                  height: rect.h,
+                  zIndex: 5,
+                }}
+              />
+              <button
+                type="button"
+                className="absolute z-20 rounded-full bg-foam/95 px-6 py-3 text-xl font-extrabold text-indigo shadow-lg"
+                style={{
+                  left: rect.x + rect.w * 0.5 - 120,
+                  top: rect.y + rect.h * 0.78,
+                }}
+                onClick={startStory}
+              >
+                Comenzar cuento
+              </button>
+            </>
+          ) : (
+            <>
+              {/* Zona D: video principal (abajo-derecha) */}
+              <video
+                ref={videoDRef}
+                src={moment.videoD}
+                muted
+                playsInline
+                className="absolute max-w-none object-cover pointer-events-none"
+                style={{
+                  left: rect.x + rect.w * 0.5,
+                  top: rect.y + rect.h * 0.5,
+                  width: rect.w * 0.5,
+                  height: rect.h * 0.5,
+                  zIndex: 6,
+                }}
+                onEnded={() => setPlaying(false)}
+              />
+
+              {/* Zona C: video secundario solo momento 4 (abajo-izquierda) */}
+              {moment.videoC ? (
+                <video
+                  ref={videoCRef}
+                  src={moment.videoC}
+                  muted
+                  playsInline
+                  className="absolute max-w-none object-cover pointer-events-none"
+                  style={{
+                    left: rect.x,
+                    top: rect.y + rect.h * 0.5,
+                    width: rect.w * 0.5,
+                    height: rect.h * 0.5,
+                    zIndex: 6,
+                  }}
+                />
+              ) : null}
+
+              {/* Zona A: texto de narración (arriba-izquierda) */}
+              <div
+                className="absolute z-10 overflow-auto rounded-3xl bg-foam/95 p-4 text-lg font-medium text-ink shadow-lg"
+                style={{
+                  left: rect.x + rect.w * 0.04,
+                  top: rect.y + rect.h * 0.04,
+                  width: rect.w * 0.42,
+                  height: rect.h * 0.42,
+                }}
+              >
+                <p>{moment.text}</p>
+              </div>
+
+              {/* Controles discretos */}
+              <div
+                className="absolute z-20 flex gap-2"
+                style={{
+                  left: rect.x + rect.w * 0.04,
+                  top: rect.y + rect.h * 0.48,
+                }}
+              >
+                {momentIndex > 0 && (
+                  <button type="button" className="btn btn-quiet text-sm" onClick={prev}>
+                    Volver
+                  </button>
+                )}
+                <button type="button" className="btn btn-quiet text-sm" onClick={repeat}>
+                  Repetir video
+                </button>
+                {!isLast ? (
+                  <button type="button" className="btn btn-primary text-sm" onClick={next}>
+                    Siguiente
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-primary text-sm"
+                    onClick={() => {
+                      /* La navegación al mapa la maneja el footer */
+                    }}
+                  >
+                    Ir al mapa
+                  </button>
+                )}
+              </div>
+            </>
+          )}
         </>
       )}
     </Scene>
