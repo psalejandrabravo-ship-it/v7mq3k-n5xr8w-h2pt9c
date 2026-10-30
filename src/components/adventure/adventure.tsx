@@ -10,6 +10,7 @@ import {
   saveProgress,
   type Save,
   type ScreenName,
+  TOTAL_MISSIONS,
 } from "@/game/progress";
 import { Dialog, Footer, FullscreenButton, ShellHeader, useFullscreen } from "./chrome";
 import { MapScene } from "./map-scene";
@@ -79,15 +80,15 @@ export function AdventureApp() {
   }
 
   function go(screen: ScreenName) {
-    if (screen === "chest" && save.completed < 6) return;
-    if (screen === "video" && !(save.completed === 6 && save.chestOpen)) return;
+    if (screen === "chest" && save.completed < TOTAL_MISSIONS) return;
+    if (screen === "video" && !(save.completed === TOTAL_MISSIONS && save.chestOpen)) return;
     if (screen === "mission") return;
     persist({ ...save, screen });
   }
 
   function openMission(order: number) {
     if (pending || lock.current) return;
-    if (order !== save.completed + 1 || order < 1 || order > 6) return;
+    if (order !== save.completed + 1 || order < 1 || order > TOTAL_MISSIONS) return;
     persist({ ...save, screen: "mission", missionOrder: order });
   }
 
@@ -115,12 +116,12 @@ export function AdventureApp() {
   }
 
   function openChest() {
-    if (save.completed !== 6) return;
+    if (save.completed !== TOTAL_MISSIONS) return;
     persist({ ...save, screen: "chest" });
   }
 
   function revealChest() {
-    if (save.completed !== 6 || save.chestOpen || lock.current) return;
+    if (save.completed !== TOTAL_MISSIONS || save.chestOpen || lock.current) return;
     lock.current = true;
     persist({ ...save, chestOpen: true, screen: "chest" });
     setChestFx(true);
@@ -175,7 +176,7 @@ export function AdventureApp() {
     }
   }
 
-  const countLabel = `Misiones completadas: ${save.completed} de 6`;
+  const countLabel = `Misiones completadas: ${save.completed} de ${TOTAL_MISSIONS}`;
   const progress = hasProgress(save);
   const title = headerTitle(save);
   const currentMission = save.completed + 1;
@@ -320,7 +321,7 @@ export function AdventureApp() {
         </div>
       </Dialog>
       <Dialog open={resetOpen} title="¿Reiniciar la aventura?" onClose={() => setResetOpen(false)}>
-        <p className="text-lg">Se borrará el avance de las seis misiones y el cofre volverá a estar cerrado.</p>
+        <p className="text-lg">Se borrará el avance de las {TOTAL_MISSIONS} misiones y el cofre volverá a estar cerrado.</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <button type="button" className="btn btn-quiet" onClick={() => setResetOpen(false)}>
             Cancelar
@@ -469,7 +470,7 @@ function RightActions({
     );
   }
   if (save.screen === "map") {
-    if (save.completed >= 6) {
+    if (save.completed >= TOTAL_MISSIONS) {
       return (
         <button type="button" className="btn btn-primary" disabled={pending} onClick={onChest}>
           Ir al cofre
