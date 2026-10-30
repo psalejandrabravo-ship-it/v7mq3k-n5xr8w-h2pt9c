@@ -180,7 +180,7 @@ export function AdventureApp() {
   const progress = hasProgress(save);
   const title = headerTitle(save);
   const currentMission = save.completed + 1;
-  const isStory = save.screen === "story";
+  const isImmersive = save.screen === "story" || save.screen === "cover" || save.screen === "map" || save.screen === "mission";
 
   return (
     <div ref={shell} className="relative flex h-dvh flex-col overflow-hidden bg-indigo text-ink">
@@ -195,13 +195,7 @@ export function AdventureApp() {
         </div>
       ) : (
         <>
-          {!isStory && (save.screen === "cover" ? (
-            <header className="grid h-16 shrink-0 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-indigo px-4">
-              <span className="sr-only">Inicio</span>
-              <span />
-              <FullscreenButton active={fs.active} onClick={() => void fs.toggle()} />
-            </header>
-          ) : (
+          {!isImmersive && (
             <ShellHeader
               logoSrc={logoUrl}
               title={title}
@@ -209,8 +203,8 @@ export function AdventureApp() {
               headingRef={heading}
               fullscreen={<FullscreenButton active={fs.active} onClick={() => void fs.toggle()} />}
             />
-          ))}
-          {notice && !isStory ? (
+          )}
+          {notice && !isImmersive ? (
             <p className="shrink-0 bg-sand px-4 py-2 text-center text-base font-bold text-ink" role="status">
               {notice}
               <button type="button" className="btn btn-text ml-2" onClick={() => setNotice(null)}>
@@ -218,12 +212,12 @@ export function AdventureApp() {
               </button>
             </p>
           ) : null}
-          {warning && !isStory ? (
+          {warning && !isImmersive ? (
             <p className="shrink-0 bg-gold/30 px-4 py-2 text-center text-base font-bold text-ink" role="status">
               {warning}
             </p>
           ) : null}
-          {fs.message && !isStory ? (
+          {fs.message && !isImmersive ? (
             <p className="shrink-0 bg-foam px-4 py-2 text-center text-base font-bold text-sea" role="status">
               {fs.message === FAIL_FS ? fs.message : fs.message}
               <button type="button" className="btn btn-text ml-2" onClick={fs.dismiss}>
@@ -237,7 +231,20 @@ export function AdventureApp() {
             </p>
           ) : null}
           <main className="min-h-0 flex-1">
-            {save.screen === "cover" ? <CoverScene logoSrc={logoUrl} headingRef={heading} /> : null}
+            {save.screen === "cover" ? (
+              <CoverScene
+                logoSrc={logoUrl}
+                headingRef={heading}
+                onStart={() => go("story")}
+                onContinue={() => go("map")}
+                onStory={() => go("story")}
+                onReset={() => setResetOpen(true)}
+                onLogo={() => setLogoOpen(true)}
+                onToggleFullscreen={() => void fs.toggle()}
+                fullscreenActive={fs.active}
+                hasProgress={progress}
+              />
+            ) : null}
             {save.screen === "story" ? (
               <StoryScene
                 showLayers={layers}
@@ -254,13 +261,27 @@ export function AdventureApp() {
                 onFinishMove={finishMove}
                 onOpenMission={openMission}
                 onOpenChest={openChest}
+                onStory={() => go("story")}
+                onReset={() => setResetOpen(true)}
+                onToggleFullscreen={() => void fs.toggle()}
+                fullscreenActive={fs.active}
+                currentMission={currentMission}
               />
             ) : null}
-            {save.screen === "mission" ? <MissionScene order={save.missionOrder} /> : null}
+            {save.screen === "mission" ? (
+              <MissionScene
+                order={save.missionOrder}
+                onComplete={completeMission}
+                onMap={() => go("map")}
+                onToggleFullscreen={() => void fs.toggle()}
+                fullscreenActive={fs.active}
+                busy={busy}
+              />
+            ) : null}
             {save.screen === "chest" ? <ChestScene open={save.chestOpen} justOpened={chestFx} /> : null}
             {save.screen === "video" ? <VideoScene /> : null}
           </main>
-          {!isStory && (
+          {!isImmersive && (
             <Footer
               left={
                 <LeftActions
@@ -383,27 +404,8 @@ function LeftActions({
   onReset: () => void;
   onLogo: () => void;
 }) {
-  if (save.screen === "cover") {
-    return (
-      <button type="button" className="btn btn-quiet" onClick={onLogo}>
-        Personalizar logotipo
-      </button>
-    );
-  }
-  if (save.screen === "story") {
+  if (save.screen === "cover" || save.screen === "story" || save.screen === "map" || save.screen === "mission") {
     return null;
-  }
-  if (save.screen === "map") {
-    return (
-      <>
-        <button type="button" className="btn btn-quiet" onClick={onStory}>
-          Ver el cuento
-        </button>
-        <button type="button" className="btn btn-quiet" onClick={onReset}>
-          Reiniciar aventura
-        </button>
-      </>
-    );
   }
   return (
     <button type="button" className="btn btn-quiet" onClick={onMap}>
@@ -445,52 +447,8 @@ function RightActions({
   onVideo: () => void;
   onCover: () => void;
 }) {
-  if (save.screen === "cover") {
-    return progress ? (
-      <>
-        <button type="button" className="btn btn-quiet" onClick={onStory}>
-          Ver el cuento
-        </button>
-        <button type="button" className="btn btn-quiet" onClick={onReset}>
-          Reiniciar aventura
-        </button>
-        <button type="button" className="btn btn-primary" onClick={onContinue}>
-          Continuar aventura
-        </button>
-      </>
-    ) : (
-      <button type="button" className="btn btn-primary" onClick={onStart}>
-        Comenzar aventura
-      </button>
-    );
-  }
-  if (save.screen === "story") {
+  if (save.screen === "cover" || save.screen === "story" || save.screen === "map" || save.screen === "mission") {
     return null;
-  }
-  if (save.screen === "map") {
-    if (save.completed >= TOTAL_MISSIONS) {
-      return (
-        <button type="button" className="btn btn-primary" disabled={pending} onClick={onChest}>
-          Ir al cofre
-        </button>
-      );
-    }
-    return (
-      <button type="button" className="btn btn-primary" disabled={pending} onClick={onMission}>
-        Ir a la misión {currentMission}
-      </button>
-    );
-  }
-  if (save.screen === "mission") {
-    const can = save.missionOrder === save.completed + 1;
-    return (
-      <div className="flex flex-col items-end gap-1">
-        <button type="button" className="btn btn-primary" disabled={!can || busy} onClick={onComplete}>
-          Completar misión y volver al mapa
-        </button>
-        <p className="max-w-xs text-right text-sm font-bold text-sea">Control provisional de la persona facilitadora</p>
-      </div>
-    );
   }
   if (save.screen === "chest") {
     return save.chestOpen ? (
