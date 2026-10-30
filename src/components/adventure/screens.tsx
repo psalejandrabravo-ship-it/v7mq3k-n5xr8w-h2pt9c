@@ -134,7 +134,7 @@ export function StoryScene({ showLayers }: { showLayers: boolean }) {
               />
               <button
                 type="button"
-                className="absolute z-20 rounded-full bg-foam/95 px-6 py-3 text-xl font-extrabold text-indigo shadow-lg"
+                className="absolute z-20 rounded-full bg-white/20 backdrop-blur-sm px-6 py-3 text-xl font-extrabold text-white shadow-lg border border-white/30"
                 style={{
                   left: rect.x + rect.w * 0.5 - 120,
                   top: rect.y + rect.h * 0.78,
@@ -146,7 +146,6 @@ export function StoryScene({ showLayers }: { showLayers: boolean }) {
             </>
           ) : (
             <>
-              {/* Zona D: video principal (abajo-derecha) */}
               <video
                 ref={videoDRef}
                 src={moment.videoD}
@@ -163,7 +162,6 @@ export function StoryScene({ showLayers }: { showLayers: boolean }) {
                 onEnded={() => setPlaying(false)}
               />
 
-              {/* Zona C: video secundario solo momento 4 (abajo-izquierda) */}
               {moment.videoC ? (
                 <video
                   ref={videoCRef}
@@ -181,48 +179,39 @@ export function StoryScene({ showLayers }: { showLayers: boolean }) {
                 />
               ) : null}
 
-              {/* Zona A: texto de narración (arriba-izquierda) */}
+              {/* Texto grande blanco sin fondo */}
               <div
-                className="absolute z-10 overflow-auto rounded-3xl bg-foam/95 p-4 text-lg font-medium text-ink shadow-lg"
+                className="absolute z-10 overflow-auto p-4 text-white text-2xl md:text-3xl font-bold leading-tight drop-shadow-lg"
                 style={{
                   left: rect.x + rect.w * 0.04,
                   top: rect.y + rect.h * 0.04,
-                  width: rect.w * 0.42,
-                  height: rect.h * 0.42,
+                  width: rect.w * 0.45,
+                  height: rect.h * 0.4,
+                  textShadow: "0 2px 8px rgba(0,0,0,0.7)",
                 }}
               >
                 <p>{moment.text}</p>
               </div>
 
-              {/* Controles discretos */}
+              {/* Controles discretos sin bordes */}
               <div
-                className="absolute z-20 flex gap-2"
+                className="absolute z-20 flex gap-3"
                 style={{
                   left: rect.x + rect.w * 0.04,
                   top: rect.y + rect.h * 0.48,
                 }}
               >
                 {momentIndex > 0 && (
-                  <button type="button" className="btn btn-quiet text-sm" onClick={prev}>
+                  <button type="button" className="text-white/90 text-base font-semibold hover:text-white bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full" onClick={prev}>
                     Volver
                   </button>
                 )}
-                <button type="button" className="btn btn-quiet text-sm" onClick={repeat}>
-                  Repetir video
+                <button type="button" className="text-white/90 text-base font-semibold hover:text-white bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full" onClick={repeat}>
+                  Repetir
                 </button>
-                {!isLast ? (
-                  <button type="button" className="btn btn-primary text-sm" onClick={next}>
+                {!isLast && (
+                  <button type="button" className="text-white font-bold bg-white/20 backdrop-blur-sm px-5 py-2 rounded-full hover:bg-white/30" onClick={next}>
                     Siguiente
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    className="btn btn-primary text-sm"
-                    onClick={() => {
-                      /* La navegación al mapa la maneja el footer */
-                    }}
-                  >
-                    Ir al mapa
                   </button>
                 )}
               </div>
