@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, type RefObject } from "react";
 import { anchors, aspects, derived, letterbox, originals } from "@/game/assets";
 import { storyMoments, storyStartImage } from "@/content/story";
-import { missionSlot } from "@/content/missions";
+import { getMission } from "@/content/missions";
+import { loadConfig, getActivity, type Config } from "@/game/config";
 import { learningVideo } from "@/content/video";
 import { storyLayers } from "@/game/story-config";
 import { Scene, type SceneRect } from "./scene";
@@ -62,6 +63,13 @@ export function CoverScene({
         onClick={onLogo}
       >
         Logotipo
+      </button>
+      <button
+        type="button"
+        className="absolute top-16 left-4 z-40 text-white/80 hover:text-white bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-medium"
+        onClick={() => {/* TODO: open config */}}
+      >
+        Configuración
       </button>
       <button
         type="button"
@@ -341,36 +349,99 @@ export function MissionScene({
   fullscreenActive: boolean;
   busy: boolean;
 }) {
-  const slot = missionSlot(order);
+  const mission = getMission(order);
+  const [config] = useState<Config>(() => loadConfig());
+  const activity = getActivity(order, config);
+  const includeActivities = config.includeActivities;
+
+  const [selected, setSelected] = useState<number | null>(null);
+  const [showWrong, setShowWrong] = useState(false);
+  const [solved, setSolved] = useState(false);
+  const [showActivity, setShowActivity] = useState(false);
+
+  function choose(index: number) {
+    if (solved || busy) return;
+    setSelected(index);
+    if (index === mission.correctIndex) {
+      setSolved(true);
+      setShowWrong(false);
+    } else {
+      setShowWrong(true);
+    }
+  }
+
+  function retry() {
+    setSelected(null);
+    setShowWrong(false);
+  }
+
+  const illustration = solved ? mission.solutionImage : mission.situationImage;
+  const illustrationAlt = solved ? mission.solutionAlt : mission.situationAlt;
+
   return (
     <div className="relative h-full w-full">
       <Scene src={originals.beach} aspect={aspects.beach} letterbox={letterbox.beach} alt="">
-        {(rect) =>
-          slot.instructions ? (
-            <div
-              className="absolute z-10 p-4 text-white text-lg font-medium"
+        {(rect) => (
+          <>
+            {/* Ilustración integrada en la arena */}
+            <img
+              src={illustration}
+              alt={illustrationAlt}
+              className="absolute z-10 max-w-none pointer-events-none"
               style={{
-                left: rect.x + rect.w * 0.06,
-                bottom: rect.y + 80,
-                width: rect.w * 0.55,
-                background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.2) 80%, transparent 100%)",
-                borderRadius: "1rem",
-                textShadow: "0 1px 4px rgba(0,0,0,0.7)",
+                left: rect.x + rect.w * 0.15,
+                top: rect.y + rect.h * 0.38,
+                width: rect.w * 0.7,
+                height: rect.h * 0.55,
+                objectFit: "contain",
+                objectPosition: "center bottom",
+              }}
+            />
+
+            {/* Textos superiores sobre el cielo */}
+            <div
+              className="absolute z-20 text-white"
+              style={{
+                left: rect.x + rect.w * 0.08,
+                top: rect.y + rect.h * 0.04,
+                width: rect.w * 0.84,
+                textShadow: "0 2px 6px rgba(0,0,0,0.7)",
               }}
             >
-              {slot.instructions}
+              <h2 className="text-2xl md:text-3xl font-extrabold mb-1">
+                Misión {mission.order} — {mission.title}
+              </h2>
+
+              {!solved && (
+                <>
+                  <p className="text-lg md:text-xl mb-2 font-medium">{mission.situation}</p>
+                  <p className="text-xl md:text-2xl font-bold mb-3">{mission.question}</p>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    {mission.alternatives.map((alt, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className="flex-1 text-left bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-3 rounded-2xl text-base md:text-lg font-semibold border border-white/20"
+                        onClick={() => choose(i)}
+                        disabled={busy}
+                      >
+                        <span className="font-bold mr-2">{String.fromCharCode(65 + i)}.</span>
+                        {alt}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {solved && (
+                <p className="text-lg md:text-xl font-medium mt-2">{mission.teaching}</p>
+              )}
             </div>
-          ) : (
-            <p
-              className="absolute z-10 text-white text-base font-bold drop-shadow"
-              style={{ left: rect.x + rect.w / 2 - 120, top: rect.y + 24 }}
-            >
-              Contenido de esta misión pendiente.
-            </p>
-          )
-        }
+          </>
+        )}
       </Scene>
 
+      {/* Controles */}
       <button
         type="button"
         className="absolute top-4 left-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
@@ -387,16 +458,80 @@ export function MissionScene({
         {fullscreenActive ? "Salir" : "Ampliar"}
       </button>
 
-      <div className="absolute bottom-6 right-6 z-40">
-        <button
-          type="button"
-          className="text-white font-bold bg-white/25 backdrop-blur-md px-6 py-3 rounded-full text-lg hover:bg-white/35 disabled:opacity-50"
-          disabled={busy}
-          onClick={onComplete}
-        >
-          Completar misión
-        </button>
-      </div>
+      {/* Retroalimentación incorrecta */}
+      {showWrong && !solved && (
+        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-40 bg-black/60 backdrop-blur-md text-white px-6 py-4 rounded-2xl text-center max-w-lg">
+          <p className="mb-3 text-lg">{mission.wrongFeedback}</p>
+          <button
+            type="button"
+            className="bg-white/25 hover:bg-white/35 px-6 py-2 rounded-full font-semibold"
+            onClick={retry}
+          >
+            Intentar de nuevo
+          </button>
+        </div>
+      )}
+
+      {/* Botones tras resolver */}
+      {solved && (
+        <div className="absolute bottom-6 left-0 right-0 z-40 flex justify-center gap-3">
+          {includeActivities ? (
+            <button
+              type="button"
+              className="text-white font-bold bg-white/25 backdrop-blur-md px-6 py-3 rounded-full text-lg hover:bg-white/35"
+              onClick={() => setShowActivity(true)}
+            >
+              Ver misión del grupo
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="text-white font-bold bg-white/25 backdrop-blur-md px-6 py-3 rounded-full text-lg hover:bg-white/35 disabled:opacity-50"
+              disabled={busy}
+              onClick={onComplete}
+            >
+              Continuar al mapa
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Ventana de actividad presencial */}
+      {showActivity && includeActivities && (
+        <div className="absolute inset-0 z-50 bg-black/50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+          <div className="bg-white text-ink rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 shadow-2xl">
+            <h3 className="text-2xl font-extrabold mb-2">{mission.teaching}</h3>
+            <h4 className="text-xl font-bold mt-4 mb-1">Misión para el grupo</h4>
+            <p className="font-semibold text-lg mb-2">{activity.name}</p>
+            {activity.materials && <p className="mb-1"><strong>Materiales:</strong> {activity.materials}</p>}
+            {activity.preparation && <p className="mb-1"><strong>Preparación:</strong> {activity.preparation}</p>}
+            {activity.instruction && <p className="mb-1"><strong>Consigna:</strong> {activity.instruction}</p>}
+            {activity.guidance && <p className="mb-1"><strong>Orientación:</strong> {activity.guidance}</p>}
+            {activity.closingQuestion && <p className="mb-1"><strong>Pregunta de cierre:</strong> {activity.closingQuestion}</p>}
+            {activity.completionCriteria && <p className="mb-3"><strong>Criterio de finalización:</strong> {activity.completionCriteria}</p>}
+            <div className="flex gap-3 mt-4">
+              <button
+                type="button"
+                className="flex-1 bg-indigo text-white font-bold py-3 rounded-full hover:bg-indigo/90 disabled:opacity-50"
+                disabled={busy}
+                onClick={() => {
+                  setShowActivity(false);
+                  onComplete();
+                }}
+              >
+                Misión completada
+              </button>
+              <button
+                type="button"
+                className="px-5 py-3 rounded-full border border-ink/20"
+                onClick={() => setShowActivity(false)}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
