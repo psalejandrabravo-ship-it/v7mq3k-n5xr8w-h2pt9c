@@ -114,7 +114,7 @@ export const missions: Mission[] = [
       guidance: "Participa solamente el grupo encargado de esta misión. Probar el recorrido con la figura del pirata. Los niños no caminan sobre los bloques. Permitir ajustar el camino hasta que puedan recorrerlo con la figura.",
       closingQuestion: "¿Qué pudimos resolver al construir juntos?",
       completionCriteria: "El grupo construyó un camino continuo y la figura pudo llegar a la isla.",
-      briefInstruction: "Construyan juntos un camino con bloques y pruébenlo con la figura del pirata.",
+      briefInstruction: "Construyan juntos un camino con bloques y pruébenlo con la figura del pirata. No caminen sobre los bloques.",
     },
   },
   {
@@ -143,7 +143,7 @@ export const missions: Mission[] = [
       guidance: "Participa solamente el grupo encargado de esta misión. Quienes ya tienen su pareja pueden señalar una tarjeta, dar una pista o buscar junto a un compañero. No deben recoger la pareja por él ni acumular parejas adicionales. No convertir esta actividad en un juego de memoria con tarjetas boca abajo.",
       closingQuestion: "Cuando terminaron de encontrar su pareja, ¿cómo ayudaron a los demás?",
       completionCriteria: "Cada integrante tiene una pareja de dibujos.",
-      briefInstruction: "Cada uno encuentra una pareja de dibujos. Si ya tienes la tuya, ayuda con pistas a quienes siguen buscando.",
+      briefInstruction: "Cada uno encuentra una pareja de dibujos. Si ya tienes la tuya, ayuda con pistas a quienes siguen buscando. ¡Terminamos cuando todos tengan una pareja!",
     },
   },
   {
@@ -172,7 +172,7 @@ export const missions: Mission[] = [
       guidance: "Participa solamente el grupo encargado de esta misión. Los compañeros pueden dar pistas o señalar un lugar, sin quitarle la pieza ni sustituir a quien la está colocando. La persona adulta puede ofrecer el apoyo necesario para que cada niño participe.",
       closingQuestion: "¿Habríamos podido completar el dibujo si faltaba la pieza de alguien?",
       completionCriteria: "El rompecabezas está armado y cada integrante participó colocando su pieza.",
-      briefInstruction: "Armen el rompecabezas juntos. Cada integrante coloca su pieza y puede recibir ayuda de sus compañeros.",
+      briefInstruction: "Armen el rompecabezas juntos. Cada integrante coloca su propia pieza. Pueden ayudarse con pistas.",
     },
   },
 ];

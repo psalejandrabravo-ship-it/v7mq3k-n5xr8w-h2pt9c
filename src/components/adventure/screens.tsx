@@ -208,8 +208,8 @@ export function StoryScene({
             {!started ? (
               <>
                 <img
-                  src={storyStartImage}
-                  alt="Composición inicial del cuento"
+                  src={originals.story}
+                  alt="Escenario completo del cuento"
                   className="absolute max-w-none object-cover"
                   style={{
                     left: rect.x,
@@ -219,12 +219,23 @@ export function StoryScene({
                     zIndex: 5,
                   }}
                 />
+                <img
+                  src={derived.pirate}
+                  alt="Pirata en zona D"
+                  className="absolute max-w-none pointer-events-none"
+                  style={{
+                    left: rect.x + rect.w * 0.62,
+                    top: rect.y + rect.h * 0.58,
+                    width: rect.w * 0.22,
+                    zIndex: 6,
+                  }}
+                />
                 <button
                   type="button"
                   className="absolute z-30 rounded-full bg-white/15 backdrop-blur-md px-8 py-4 text-2xl font-extrabold text-white shadow-lg border border-white/20"
                   style={{
                     left: rect.x + rect.w * 0.5 - 140,
-                    top: rect.y + rect.h * 0.78,
+                    top: rect.y + rect.h * 0.82,
                   }}
                   onClick={startStory}
                 >
@@ -358,6 +369,7 @@ export function MissionScene({
   const [showWrong, setShowWrong] = useState(false);
   const [solved, setSolved] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   function choose(index: number) {
     if (solved || busy) return;
@@ -496,23 +508,25 @@ export function MissionScene({
         </div>
       )}
 
-      {/* Ventana de actividad presencial */}
-      {showActivity && includeActivities && (
-        <div className="absolute inset-0 z-50 bg-black/50 flex items-center justify-center p-4" role="dialog" aria-modal="true">
-          <div className="bg-white text-ink rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 shadow-2xl">
-            <h3 className="text-2xl font-extrabold mb-2">{mission.teaching}</h3>
-            <h4 className="text-xl font-bold mt-4 mb-1">Misión para el grupo</h4>
+      {/* Ventana principal de actividad (simplificada) */}
+      {showActivity && includeActivities && !showDetails && (
+        <div className="absolute inset-0 z-50 bg-black/60 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+          <div className="bg-white text-ink rounded-3xl max-w-md w-full p-5 shadow-xl">
+            <h3 className="text-xl font-extrabold mb-1">Misión para el grupo</h3>
             <p className="font-semibold text-lg mb-2">{activity.name}</p>
-            {activity.materials && <p className="mb-1"><strong>Materiales:</strong> {activity.materials}</p>}
-            {activity.preparation && <p className="mb-1"><strong>Preparación:</strong> {activity.preparation}</p>}
-            {activity.instruction && <p className="mb-1"><strong>Consigna:</strong> {activity.instruction}</p>}
-            {activity.guidance && <p className="mb-1"><strong>Orientación:</strong> {activity.guidance}</p>}
-            {activity.closingQuestion && <p className="mb-1"><strong>Pregunta de cierre:</strong> {activity.closingQuestion}</p>}
-            {activity.completionCriteria && <p className="mb-3"><strong>Criterio de finalización:</strong> {activity.completionCriteria}</p>}
-            <div className="flex gap-3 mt-4">
+            <p className="text-base mb-2">{activity.briefInstruction || activity.instruction}</p>
+            <p className="text-sm text-ink/70 mb-4">Participa solo el grupo encargado de esta misión.</p>
+            <div className="flex flex-col gap-2">
               <button
                 type="button"
-                className="flex-1 bg-indigo text-white font-bold py-3 rounded-full hover:bg-indigo/90 disabled:opacity-50"
+                className="flex items-center justify-center gap-2 text-sm text-indigo font-medium"
+                onClick={() => setShowDetails(true)}
+              >
+                <span aria-hidden="true">ℹ️</span> Ver detalles
+              </button>
+              <button
+                type="button"
+                className="bg-indigo text-white font-bold py-2.5 rounded-full disabled:opacity-50"
                 disabled={busy}
                 onClick={() => {
                   setShowActivity(false);
@@ -523,12 +537,34 @@ export function MissionScene({
               </button>
               <button
                 type="button"
-                className="px-5 py-3 rounded-full border border-ink/20"
+                className="py-2 rounded-full border border-ink/20"
                 onClick={() => setShowActivity(false)}
               >
                 Cerrar
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Vista secundaria de detalles */}
+      {showActivity && showDetails && (
+        <div className="absolute inset-0 z-50 bg-black/60 flex items-center justify-center p-4" role="dialog" aria-modal="true">
+          <div className="bg-white text-ink rounded-3xl max-w-lg w-full max-h-[80vh] overflow-y-auto p-5 shadow-xl">
+            <h3 className="text-xl font-extrabold mb-3">Detalles de la actividad</h3>
+            {activity.materials && <p className="mb-1 text-sm"><strong>Materiales:</strong> {activity.materials}</p>}
+            {activity.preparation && <p className="mb-1 text-sm"><strong>Preparación:</strong> {activity.preparation}</p>}
+            {activity.instruction && <p className="mb-1 text-sm"><strong>Consigna completa:</strong> {activity.instruction}</p>}
+            {activity.guidance && <p className="mb-1 text-sm"><strong>Orientación:</strong> {activity.guidance}</p>}
+            {activity.closingQuestion && <p className="mb-1 text-sm"><strong>Pregunta de cierre:</strong> {activity.closingQuestion}</p>}
+            {activity.completionCriteria && <p className="mb-3 text-sm"><strong>Criterio de finalización:</strong> {activity.completionCriteria}</p>}
+            <button
+              type="button"
+              className="w-full py-2 rounded-full border border-ink/20"
+              onClick={() => setShowDetails(false)}
+            >
+              Volver a la instrucción
+            </button>
           </div>
         </div>
       )}
