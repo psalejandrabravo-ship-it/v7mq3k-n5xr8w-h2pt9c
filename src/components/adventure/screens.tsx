@@ -494,8 +494,6 @@ export function MissionScene({
           )}
         </div>
       )}
-    </div>
-  );
 
       {/* Ventana principal de actividad (simplificada) */}
       {showActivity && includeActivities && !showDetails && (
