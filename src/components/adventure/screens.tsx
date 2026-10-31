@@ -391,84 +391,71 @@ export function MissionScene({
   const illustrationAlt = solved ? mission.solutionAlt : mission.situationAlt;
 
   return (
-    <div className="relative h-full w-full">
-      <Scene src={originals.beach} aspect={aspects.beach} letterbox={letterbox.beach} alt="">
-        {(rect) => (
+    <div className="relative h-full w-full flex flex-col bg-black">
+      {/* Fondo completo sin letterbox */}
+      <img
+        src={originals.beach}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover"
+      />
+
+      {/* Controles discretos */}
+      <div className="absolute top-3 left-3 right-3 z-50 flex justify-between">
+        <button
+          type="button"
+          className="text-white/90 hover:text-white bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-semibold"
+          onClick={onMap}
+        >
+          Volver al mapa
+        </button>
+        <button
+          type="button"
+          className="text-white/90 hover:text-white bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-semibold"
+          onClick={onToggleFullscreen}
+          aria-label={fullscreenActive ? "Salir de pantalla completa" : "Ampliar pantalla"}
+        >
+          {fullscreenActive ? "Salir" : "Ampliar"}
+        </button>
+      </div>
+
+      {/* Zona de textos */}
+      <div className="relative z-20 flex-shrink-0 pt-12 px-4 pb-2 text-white" style={{ textShadow: "0 2px 6px rgba(0,0,0,0.7)" }}>
+        <h2 className="text-xl md:text-2xl font-extrabold mb-1">
+          Misión {mission.order} — {mission.title}
+        </h2>
+        {!solved && (
           <>
-            {/* Ilustración integrada en la arena */}
-            <img
-              src={illustration}
-              alt={illustrationAlt}
-              className="absolute z-10 max-w-none pointer-events-none"
-              style={{
-                left: rect.x + rect.w * 0.15,
-                top: rect.y + rect.h * 0.38,
-                width: rect.w * 0.7,
-                height: rect.h * 0.55,
-                objectFit: "contain",
-                objectPosition: "center bottom",
-              }}
-            />
-
-            {/* Textos superiores sobre el cielo */}
-            <div
-              className="absolute z-20 text-white"
-              style={{
-                left: rect.x + rect.w * 0.08,
-                top: rect.y + rect.h * 0.04,
-                width: rect.w * 0.84,
-                textShadow: "0 2px 6px rgba(0,0,0,0.7)",
-              }}
-            >
-              <h2 className="text-2xl md:text-3xl font-extrabold mb-1">
-                Misión {mission.order} — {mission.title}
-              </h2>
-
-              {!solved && (
-                <>
-                  <p className="text-lg md:text-xl mb-2 font-medium">{mission.situation}</p>
-                  <p className="text-xl md:text-2xl font-bold mb-3">{mission.question}</p>
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                    {mission.alternatives.map((alt, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        className="flex-1 text-left bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-3 rounded-2xl text-base md:text-lg font-semibold border border-white/20"
-                        onClick={() => choose(i)}
-                        disabled={busy}
-                      >
-                        <span className="font-bold mr-2">{String.fromCharCode(65 + i)}.</span>
-                        {alt}
-                      </button>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {solved && (
-                <p className="text-lg md:text-xl font-medium mt-2">{mission.teaching}</p>
-              )}
+            <p className="text-base md:text-lg mb-1">{mission.situation}</p>
+            <p className="text-lg md:text-xl font-bold mb-2">{mission.question}</p>
+            <div className="flex flex-col md:flex-row gap-2">
+              {mission.alternatives.map((alt, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className="flex-1 text-left bg-white/15 hover:bg-white/25 px-3 py-2 rounded-xl text-sm md:text-base font-semibold border border-white/20"
+                  onClick={() => choose(i)}
+                  disabled={busy}
+                >
+                  <span className="font-bold mr-1">{String.fromCharCode(65 + i)}.</span>
+                  {alt}
+                </button>
+              ))}
             </div>
           </>
         )}
-      </Scene>
+        {solved && (
+          <p className="text-base md:text-lg font-medium">{mission.teaching}</p>
+        )}
+      </div>
 
-      {/* Controles */}
-      <button
-        type="button"
-        className="absolute top-4 left-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
-        onClick={onMap}
-      >
-        Volver al mapa
-      </button>
-      <button
-        type="button"
-        className="absolute top-4 right-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
-        onClick={onToggleFullscreen}
-        aria-label={fullscreenActive ? "Salir de pantalla completa" : "Ampliar pantalla"}
-      >
-        {fullscreenActive ? "Salir" : "Ampliar"}
-      </button>
+      {/* Ilustración en zona propia */}
+      <div className="relative flex-1 min-h-0 flex items-end justify-center pb-4">
+        <img
+          src={illustration}
+          alt={illustrationAlt}
+          className="max-w-[90%] max-h-full object-contain"
+        />
+      </div>
 
       {/* Retroalimentación incorrecta */}
       {showWrong && !solved && (
@@ -507,6 +494,8 @@ export function MissionScene({
           )}
         </div>
       )}
+    </div>
+  );
 
       {/* Ventana principal de actividad (simplificada) */}
       {showActivity && includeActivities && !showDetails && (
