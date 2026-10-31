@@ -536,20 +536,55 @@ export function MissionScene({
   );
 }
 
-export function ChestScene({ open, justOpened }: { open: boolean; justOpened: boolean }) {
+export function ChestScene({ 
+  open, 
+  justOpened,
+  onOpen,
+  canOpen,
+  onMap,
+}: { 
+  open: boolean; 
+  justOpened: boolean;
+  onOpen?: () => void;
+  canOpen?: boolean;
+  onMap?: () => void;
+}) {
   const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const showFx = open && justOpened && !reduced;
   return (
-    <Scene src={originals.beach} aspect={aspects.beach} letterbox={letterbox.beach} alt="">
-      {(rect) => (
-        <>
-          <Glow rect={rect} open={open} animate={showFx} staticGlow={open && !showFx} />
-          {showFx ? <Motes rect={rect} /> : null}
-          <ChestSprite rect={rect} src={derived.chestClosed} anchor={anchors.chestClosed} visible={!open} pop={false} />
-          <ChestSprite rect={rect} src={derived.chestOpen} anchor={anchors.chestOpen} visible={open} pop={showFx} />
-        </>
-      )}
-    </Scene>
+    <div className="relative h-full w-full">
+      <Scene src={originals.beach} aspect={aspects.beach} letterbox={letterbox.beach} alt="">
+        {(rect) => (
+          <>
+            <Glow rect={rect} open={open} animate={showFx} staticGlow={open && !showFx} />
+            {showFx ? <Motes rect={rect} /> : null}
+            <button
+              type="button"
+              className="absolute z-20 focus:outline-none focus:ring-4 focus:ring-white/50 rounded-lg"
+              style={{
+                left: rect.x + rect.w * 0.35,
+                top: rect.y + rect.h * 0.45,
+                width: rect.w * 0.3,
+                height: rect.h * 0.35,
+              }}
+              onClick={canOpen ? onOpen : undefined}
+              disabled={!canOpen}
+              aria-label="Abrir el cofre del tesoro"
+            >
+              <ChestSprite rect={{ x: 0, y: 0, w: rect.w * 0.3, h: rect.h * 0.35 }} src={derived.chestClosed} anchor={anchors.chestClosed} visible={!open} pop={false} />
+              <ChestSprite rect={{ x: 0, y: 0, w: rect.w * 0.3, h: rect.h * 0.35 }} src={derived.chestOpen} anchor={anchors.chestOpen} visible={open} pop={showFx} />
+            </button>
+          </>
+        )}
+      </Scene>
+      <button
+        type="button"
+        className="absolute top-4 left-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
+        onClick={onMap}
+      >
+        Volver al mapa
+      </button>
+    </div>
   );
 }
 
@@ -645,20 +680,63 @@ function Motes({ rect }: { rect: SceneRect }) {
   );
 }
 
-export function VideoScene() {
+const FINAL_VIDEO = "https://videos.mirarim.com/Videos%20en%20juegos/Videos%20Tripulacion/Mas%20videos/download_20261031_151848_0000.mp4";
+
+export function VideoScene({
+  onSkip,
+  onReset,
+  onMap,
+}: {
+  onSkip?: () => void;
+  onReset?: () => void;
+  onMap?: () => void;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [blocked, setBlocked] = useState(false);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    const play = async () => {
+      try {
+        await v.play();
+      } catch {
+        setBlocked(true);
+      }
+    };
+    void play();
+  }, []);
+
   return (
-    <div className="flex h-full items-center justify-center bg-indigo p-4">
-      <div className="w-full max-w-4xl">
-        {learningVideo ? (
-          <video className="aspect-video w-full rounded-3xl bg-ink" controls preload="metadata">
-            <source src={learningVideo.src} />
-            {learningVideo.captions ? <track kind="captions" src={learningVideo.captions} srcLang="es" label="Español" default /> : null}
-          </video>
-        ) : (
-          <div className="flex aspect-video w-full items-center justify-center rounded-3xl bg-sea px-6 text-center text-xl font-extrabold text-foam">
-            Aquí se incorporará el video de aprendizaje.
-          </div>
-        )}
+    <div className="relative h-full w-full bg-black flex flex-col">
+      <video
+        ref={videoRef}
+        src={FINAL_VIDEO}
+        className="flex-1 w-full object-contain"
+        playsInline
+        onEnded={onSkip}
+      />
+      {blocked && (
+        <button
+          type="button"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/20 text-white px-6 py-3 rounded-full font-bold"
+          onClick={() => {
+            void videoRef.current?.play().then(() => setBlocked(false)).catch(() => {});
+          }}
+        >
+          Reproducir video
+        </button>
+      )}
+      <div className="flex-shrink-0 flex justify-center gap-2 p-3 bg-black/40">
+        <button type="button" className="text-white bg-white/15 px-4 py-2 rounded-full text-sm" onClick={onSkip}>
+          Saltar video
+        </button>
+        <button type="button" className="text-white bg-white/15 px-4 py-2 rounded-full text-sm" onClick={onReset}>
+          Reiniciar juego
+        </button>
+        <button type="button" className="text-white bg-white/15 px-4 py-2 rounded-full text-sm" onClick={onMap}>
+          Volver al mapa
+        </button>
       </div>
     </div>
   );

@@ -278,8 +278,29 @@ export function AdventureApp() {
                 busy={busy}
               />
             ) : null}
-            {save.screen === "chest" ? <ChestScene open={save.chestOpen} justOpened={chestFx} /> : null}
-            {save.screen === "video" ? <VideoScene /> : null}
+            {save.screen === "chest" ? (
+              <ChestScene 
+                open={save.chestOpen} 
+                justOpened={chestFx} 
+                canOpen={save.completed === TOTAL_MISSIONS && !save.chestOpen}
+                onOpen={() => {
+                  if (save.completed !== TOTAL_MISSIONS || save.chestOpen || lock.current) return;
+                  lock.current = true;
+                  setChestFx(true);
+                  persist({ ...save, chestOpen: true, screen: "video" });
+                  setTimeout(() => setChestFx(false), 800);
+                  lock.current = false;
+                }}
+                onMap={() => go("map")}
+              />
+            ) : null}
+            {save.screen === "video" ? (
+              <VideoScene 
+                onSkip={() => go("chest")}
+                onReset={() => setResetOpen(true)}
+                onMap={() => go("map")}
+              />
+            ) : null}
           </main>
           {!isImmersive && (
             <Footer

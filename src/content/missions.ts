@@ -25,6 +25,7 @@ export type Mission = {
     guidance: string;
     closingQuestion: string;
     completionCriteria: string;
+    briefInstruction: string;
   };
 };
 
@@ -55,6 +56,7 @@ export const missions: Mission[] = [
       guidance: "Participa solamente el grupo encargado de esta misión. Distribuir a sus integrantes alrededor de la tela, con espacio para sujetarla. Se desplazan caminando. Si la pelota cae, la colocan nuevamente y continúan; no se reinicia como castigo.",
       closingQuestion: "¿Cómo nos ayudamos para llevar el tesoro?",
       completionCriteria: "El grupo llevó el tesoro hasta la llegada con la participación de sus integrantes.",
+      briefInstruction: "Sujeten la tela entre todos y lleven la pelota hasta la llegada, caminando y sin dejarla caer.",
     },
   },
   {
@@ -83,6 +85,7 @@ export const missions: Mission[] = [
       guidance: "Participa solamente el grupo encargado de esta misión. Asegurar que haya objetos suficientes para que todos colaboren. No medir tiempos ni comparar con otros grupos.",
       closingQuestion: "¿Qué pasó cuando todos ayudaron con una parte?",
       completionCriteria: "Las provisiones están recogidas y todos los integrantes colaboraron.",
+      briefInstruction: "Cada integrante recoge una parte de las provisiones y la lleva al canasto. ¡Todos ayudan!",
     },
   },
   {
@@ -111,6 +114,7 @@ export const missions: Mission[] = [
       guidance: "Participa solamente el grupo encargado de esta misión. Probar el recorrido con la figura del pirata. Los niños no caminan sobre los bloques. Permitir ajustar el camino hasta que puedan recorrerlo con la figura.",
       closingQuestion: "¿Qué pudimos resolver al construir juntos?",
       completionCriteria: "El grupo construyó un camino continuo y la figura pudo llegar a la isla.",
+      briefInstruction: "Construyan juntos un camino con bloques y pruébenlo con la figura del pirata.",
     },
   },
   {
@@ -139,6 +143,7 @@ export const missions: Mission[] = [
       guidance: "Participa solamente el grupo encargado de esta misión. Quienes ya tienen su pareja pueden señalar una tarjeta, dar una pista o buscar junto a un compañero. No deben recoger la pareja por él ni acumular parejas adicionales. No convertir esta actividad en un juego de memoria con tarjetas boca abajo.",
       closingQuestion: "Cuando terminaron de encontrar su pareja, ¿cómo ayudaron a los demás?",
       completionCriteria: "Cada integrante tiene una pareja de dibujos.",
+      briefInstruction: "Cada uno encuentra una pareja de dibujos. Si ya tienes la tuya, ayuda con pistas a quienes siguen buscando.",
     },
   },
   {
@@ -167,6 +172,7 @@ export const missions: Mission[] = [
       guidance: "Participa solamente el grupo encargado de esta misión. Los compañeros pueden dar pistas o señalar un lugar, sin quitarle la pieza ni sustituir a quien la está colocando. La persona adulta puede ofrecer el apoyo necesario para que cada niño participe.",
       closingQuestion: "¿Habríamos podido completar el dibujo si faltaba la pieza de alguien?",
       completionCriteria: "El rompecabezas está armado y cada integrante participó colocando su pieza.",
+      briefInstruction: "Armen el rompecabezas juntos. Cada integrante coloca su pieza y puede recibir ayuda de sus compañeros.",
     },
   },
 ];
