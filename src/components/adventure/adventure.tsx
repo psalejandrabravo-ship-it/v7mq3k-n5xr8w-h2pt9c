@@ -303,6 +303,8 @@ export function AdventureApp() {
                   lock.current = false;
                 }}
                 onMap={() => go("map")}
+                onToggleFullscreen={() => void fs.toggle()}
+                fullscreenActive={fs.active}
               />
             ) : null}
             {save.screen === "video" ? (
