@@ -9,35 +9,35 @@ export const MAP_VIEW = { w: 1168, h: 784 };
 export const MAP_ASPECT = MAP_VIEW.w / MAP_VIEW.h;
 
 export const stops: { order: number; at: Pt }[] = [
-  { order: 1, at: { x: 0.332, y: 0.56 } },
-  { order: 2, at: { x: 0.47, y: 0.49 } },
-  { order: 3, at: { x: 0.544, y: 0.354 } },
-  { order: 4, at: { x: 0.81, y: 0.27 } },
-  { order: 5, at: { x: 0.876, y: 0.614 } },
+  { order: 1, at: { x: 0.28, y: 0.52 } },
+  { order: 2, at: { x: 0.42, y: 0.42 } },
+  { order: 3, at: { x: 0.55, y: 0.32 } },
+  { order: 4, at: { x: 0.72, y: 0.28 } },
+  { order: 5, at: { x: 0.82, y: 0.48 } },
 ];
 
 /** Punto final del cofre, después de la misión 5. */
-export const chestPoint: Pt = { x: 0.318, y: 0.82 };
+export const chestPoint: Pt = { x: 0.68, y: 0.72 };
 
 /**
  * Descanso del pirata según misiones completadas (0 a 5).
  */
 export const pirateRests: Pt[] = [
-  { x: 0.399, y: 0.604 },
-  { x: 0.426, y: 0.423 },
-  { x: 0.604, y: 0.329 },
-  { x: 0.852, y: 0.298 },
-  { x: 0.895, y: 0.66 },
-  { x: 0.276, y: 0.848 },
+  { x: 0.32, y: 0.55 },
+  { x: 0.45, y: 0.45 },
+  { x: 0.58, y: 0.35 },
+  { x: 0.75, y: 0.32 },
+  { x: 0.85, y: 0.50 },
+  { x: 0.70, y: 0.75 },
 ];
 
 /** Un punto de curva entre cada par de descansos. */
 export const legBends: Pt[] = [
-  { x: 0.492, y: 0.525 },
-  { x: 0.515, y: 0.376 },
-  { x: 0.732, y: 0.343 },
-  { x: 0.9, y: 0.48 },
-  { x: 0.478, y: 0.794 },
+  { x: 0.38, y: 0.48 },
+  { x: 0.50, y: 0.38 },
+  { x: 0.65, y: 0.30 },
+  { x: 0.82, y: 0.40 },
+  { x: 0.75, y: 0.65 },
 ];
 
 export function legPoints(index: number): Pt[] {

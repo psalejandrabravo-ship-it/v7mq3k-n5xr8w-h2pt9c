@@ -607,6 +607,11 @@ export function ChestScene({
       >
         Volver al mapa
       </button>
+      {canOpen && !open && (
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 text-white/80 text-sm bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full">
+          Presiona el cofre para abrirlo
+        </div>
+      )}
     </div>
   );
 }

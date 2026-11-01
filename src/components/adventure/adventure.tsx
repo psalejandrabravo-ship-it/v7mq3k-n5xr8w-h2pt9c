@@ -472,15 +472,7 @@ function RightActions({
     return null;
   }
   if (save.screen === "chest") {
-    return save.chestOpen ? (
-      <button type="button" className="btn btn-primary" onClick={onVideo}>
-        Ver lo que aprendimos
-      </button>
-    ) : (
-      <button type="button" className="btn btn-primary" onClick={onOpenChest}>
-        Abrir el cofre
-      </button>
-    );
+    return null; // El cofre es el control; no hay botón separado
   }
   return (
     <button type="button" className="btn btn-quiet" onClick={onCover}>
