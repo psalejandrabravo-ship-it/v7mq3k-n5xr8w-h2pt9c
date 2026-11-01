@@ -68,7 +68,7 @@ export function CoverScene({
       </button>
       <button
         type="button"
-        className="absolute top-16 left-4 z-40 text-white/80 hover:text-white bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-medium"
+        className="absolute top-4 left-40 z-50 text-white/90 hover:text-white bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
         onClick={onConfig}
       >
         Configuración
@@ -809,7 +809,7 @@ export function ConfigScene({
   }
 
   return (
-    <div className="relative h-full w-full bg-cream text-ink flex flex-col p-6 overflow-y-auto">
+    <div className="fixed inset-0 z-[100] bg-cream text-ink flex flex-col p-6 overflow-y-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-extrabold">Configuración</h2>
         <button type="button" className="btn btn-quiet" onClick={onClose}>
