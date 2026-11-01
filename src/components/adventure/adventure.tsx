@@ -14,7 +14,7 @@ import {
 } from "@/game/progress";
 import { Dialog, Footer, FullscreenButton, ShellHeader, useFullscreen } from "./chrome";
 import { MapScene } from "./map-scene";
-import { ChestScene, CoverScene, MissionScene, StoryScene, VideoScene } from "./screens";
+import { ChestScene, CoverScene, MissionScene, StoryScene, VideoScene, ConfigScene } from "./screens";
 
 const FAIL_FS = "Puedes ampliar la ventana o utilizar el modo de pantalla completa de tu navegador.";
 
@@ -32,6 +32,7 @@ export function AdventureApp() {
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
   const [logoNote, setLogoNote] = useState<string | null>(null);
   const [logoOpen, setLogoOpen] = useState(false);
+  const [configOpen, setConfigOpen] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
   const [layers, setLayers] = useState(false);
   const [chestFx, setChestFx] = useState(false);
@@ -240,11 +241,21 @@ export function AdventureApp() {
                 onStory={() => go("story")}
                 onReset={() => setResetOpen(true)}
                 onLogo={() => setLogoOpen(true)}
+                onConfig={() => setConfigOpen(true)}
                 onToggleFullscreen={() => void fs.toggle()}
                 fullscreenActive={fs.active}
                 hasProgress={progress}
               />
             ) : null}
+            {configOpen && (
+              <ConfigScene
+                onClose={() => setConfigOpen(false)}
+                onLogo={() => {
+                  setConfigOpen(false);
+                  setLogoOpen(true);
+                }}
+              />
+            )}
             {save.screen === "story" ? (
               <StoryScene
                 showLayers={layers}

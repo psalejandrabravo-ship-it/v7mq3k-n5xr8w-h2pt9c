@@ -16,6 +16,7 @@ export function CoverScene({
   onStory,
   onReset,
   onLogo,
+  onConfig,
   onToggleFullscreen,
   fullscreenActive,
   hasProgress,
@@ -27,6 +28,7 @@ export function CoverScene({
   onStory: () => void;
   onReset: () => void;
   onLogo: () => void;
+  onConfig: () => void;
   onToggleFullscreen: () => void;
   fullscreenActive: boolean;
   hasProgress: boolean;
@@ -67,7 +69,7 @@ export function CoverScene({
       <button
         type="button"
         className="absolute top-16 left-4 z-40 text-white/80 hover:text-white bg-black/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-medium"
-        onClick={() => {/* TODO: open config */}}
+        onClick={onConfig}
       >
         Configuración
       </button>
@@ -764,6 +766,66 @@ export function VideoScene({
         </button>
         <button type="button" className="text-white bg-white/15 px-4 py-2 rounded-full text-sm" onClick={onMap}>
           Volver al mapa
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function ConfigScene({
+  onClose,
+  onLogo,
+}: {
+  onClose: () => void;
+  onLogo: () => void;
+}) {
+  const [config, setConfig] = useState<Config>(() => loadConfig());
+
+  function save() {
+    try {
+      localStorage.setItem("mirarim-tripulacion-config", JSON.stringify(config));
+    } catch {}
+    onClose();
+  }
+
+  return (
+    <div className="relative h-full w-full bg-cream text-ink flex flex-col p-6 overflow-y-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-extrabold">Configuración</h2>
+        <button type="button" className="btn btn-quiet" onClick={onClose}>
+          Cerrar
+        </button>
+      </div>
+
+      <section className="mb-6">
+        <h3 className="text-lg font-bold mb-2">Logotipo</h3>
+        <p className="text-sm mb-2">Personaliza el logotipo que aparece en la portada y el mapa.</p>
+        <button type="button" className="btn btn-primary" onClick={onLogo}>
+          Personalizar logotipo
+        </button>
+      </section>
+
+      <section className="mb-6">
+        <h3 className="text-lg font-bold mb-2">Actividades presenciales</h3>
+        <label className="flex items-center gap-2 mb-3">
+          <input
+            type="checkbox"
+            checked={config.includeActivities}
+            onChange={(e) => setConfig({ ...config, includeActivities: e.target.checked })}
+          />
+          Incluir actividades presenciales
+        </label>
+        <p className="text-sm text-ink/70">
+          Las instrucciones completas se pueden editar aquí. La instrucción breve se muestra al grupo.
+        </p>
+      </section>
+
+      <div className="mt-auto flex gap-2">
+        <button type="button" className="btn btn-primary" onClick={save}>
+          Guardar
+        </button>
+        <button type="button" className="btn btn-quiet" onClick={onClose}>
+          Cancelar
         </button>
       </div>
     </div>
