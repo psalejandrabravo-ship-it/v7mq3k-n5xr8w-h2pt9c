@@ -61,14 +61,7 @@ export function CoverScene({
       {/* Controles superiores */}
       <button
         type="button"
-        className="absolute top-4 left-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
-        onClick={onLogo}
-      >
-        Logotipo
-      </button>
-      <button
-        type="button"
-        className="absolute top-4 left-40 z-50 text-white/90 hover:text-white bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
+        className="absolute top-4 left-4 z-50 text-white/90 hover:text-white bg-black/40 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
         onClick={onConfig}
       >
         Configuración
