@@ -494,7 +494,9 @@ export function MissionScene({
       {showActivity && includeActivities && !showDetails && (
         <div className="absolute inset-0 z-50 bg-black/60 flex items-center justify-center p-4" role="dialog" aria-modal="true">
           <div className="bg-white text-ink rounded-3xl max-w-md w-full p-5 shadow-xl">
-            <h3 className="text-xl font-extrabold mb-1">Misión para el grupo</h3>
+            <div className="rounded-t-3xl -mx-5 -mt-5 mb-3 px-5 py-3 text-white font-extrabold text-xl" style={{ background: missionColor(order) }}>
+              Misión para el grupo
+            </div>
             <p className="font-semibold text-lg mb-2">{activity.name}</p>
             <p className="text-base mb-2">{activity.briefInstruction || activity.instruction}</p>
             <p className="text-sm text-ink/70 mb-4">Participa solo el grupo encargado de esta misión.</p>
@@ -560,12 +562,16 @@ export function ChestScene({
   onOpen,
   canOpen,
   onMap,
+  onToggleFullscreen,
+  fullscreenActive,
 }: { 
   open: boolean; 
   justOpened: boolean;
   onOpen?: () => void;
   canOpen?: boolean;
   onMap?: () => void;
+  onToggleFullscreen?: () => void;
+  fullscreenActive?: boolean;
 }) {
   const reduced = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const showFx = open && justOpened && !reduced;
@@ -580,8 +586,8 @@ export function ChestScene({
               type="button"
               className="absolute z-20 focus:outline-none focus:ring-4 focus:ring-white/50 rounded-lg"
               style={{
-                left: rect.x + rect.w * 0.485,
-                top: rect.y + rect.h * 0.45,
+                left: rect.x + rect.w * 0.26,
+                top: rect.y + rect.h * 0.52,
                 width: rect.w * 0.48,
                 height: rect.h * 0.5,
               }}
@@ -595,13 +601,25 @@ export function ChestScene({
           </>
         )}
       </Scene>
-      <button
-        type="button"
-        className="absolute top-4 left-4 z-40 text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
-        onClick={onMap}
-      >
-        Volver al mapa
-      </button>
+      <div className="absolute top-4 left-4 right-4 z-40 flex justify-between">
+        <button
+          type="button"
+          className="text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
+          onClick={onMap}
+        >
+          Volver al mapa
+        </button>
+        {onToggleFullscreen && (
+          <button
+            type="button"
+            className="text-white/90 hover:text-white bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full text-base font-semibold"
+            onClick={onToggleFullscreen}
+            aria-label={fullscreenActive ? "Salir de pantalla completa" : "Ampliar pantalla"}
+          >
+            {fullscreenActive ? "Salir" : "Ampliar"}
+          </button>
+        )}
+      </div>
       {canOpen && !open && (
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 text-white/80 text-sm bg-black/30 backdrop-blur-sm px-4 py-2 rounded-full">
           Presiona el cofre para abrirlo
@@ -626,7 +644,7 @@ function ChestSprite({
 }) {
   const width = Math.min(rect.w * 0.55, rect.h * 0.72);
   const atX = 0.5;
-  const atY = 0.62;
+  const atY = 0.68;
   return (
     <img
       src={src}
@@ -938,4 +956,9 @@ export function ConfigScene({
       </div>
     </div>
   );
+}
+
+function missionColor(order: number): string {
+  const colors = ["#F5C518", "#4CAF50", "#E53935", "#1E88E5", "#EC407A"];
+  return colors[(order - 1) % colors.length] ?? "#5C6BC0";
 }
