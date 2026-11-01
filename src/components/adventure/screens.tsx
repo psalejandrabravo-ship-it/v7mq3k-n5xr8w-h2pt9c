@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, type RefObject } from "react";
 import { anchors, aspects, derived, letterbox, originals } from "@/game/assets";
 import { storyMoments, storyStartImage } from "@/content/story";
-import { getMission } from "@/content/missions";
+import { getMission, missions } from "@/content/missions";
 import { loadConfig, getActivity, type Config } from "@/game/config";
 import { learningVideo } from "@/content/video";
 import { storyLayers } from "@/game/story-config";
@@ -780,12 +780,32 @@ export function ConfigScene({
   onLogo: () => void;
 }) {
   const [config, setConfig] = useState<Config>(() => loadConfig());
+  const [openOrder, setOpenOrder] = useState<number | null>(null);
+
+  function updateActivity(order: number, field: keyof Config["activities"][number], value: string) {
+    setConfig((prev) => ({
+      ...prev,
+      activities: {
+        ...prev.activities,
+        [order]: { ...prev.activities[order], [field]: value },
+      },
+    }));
+  }
 
   function save() {
     try {
       localStorage.setItem("mirarim-tripulacion-config", JSON.stringify(config));
     } catch {}
     onClose();
+  }
+
+  function restore(order: number) {
+    const original = missions.find((m) => m.order === order)?.activity;
+    if (!original) return;
+    setConfig((prev) => ({
+      ...prev,
+      activities: { ...prev.activities, [order]: { ...original } },
+    }));
   }
 
   return (
@@ -807,7 +827,7 @@ export function ConfigScene({
 
       <section className="mb-6">
         <h3 className="text-lg font-bold mb-2">Actividades presenciales</h3>
-        <label className="flex items-center gap-2 mb-3">
+        <label className="flex items-center gap-2 mb-4">
           <input
             type="checkbox"
             checked={config.includeActivities}
@@ -815,12 +835,107 @@ export function ConfigScene({
           />
           Incluir actividades presenciales
         </label>
-        <p className="text-sm text-ink/70">
-          Las instrucciones completas se pueden editar aquí. La instrucción breve se muestra al grupo.
-        </p>
+
+        {missions.map((m) => {
+          const act = config.activities[m.order];
+          const open = openOrder === m.order;
+          return (
+            <div key={m.order} className="mb-3 border border-ink/15 rounded-2xl overflow-hidden">
+              <button
+                type="button"
+                className="w-full text-left px-4 py-3 font-semibold bg-white/50"
+                onClick={() => setOpenOrder(open ? null : m.order)}
+              >
+                Misión {m.order}: {act.name}
+              </button>
+              {open && (
+                <div className="p-4 space-y-3 bg-white">
+                  <label className="block text-sm font-medium">
+                    Instrucción breve que verá el grupo
+                    <textarea
+                      className="mt-1 w-full border rounded-lg p-2 text-sm"
+                      rows={2}
+                      value={act.briefInstruction}
+                      onChange={(e) => updateActivity(m.order, "briefInstruction", e.target.value)}
+                    />
+                  </label>
+                  <label className="block text-sm font-medium">
+                    Nombre
+                    <input
+                      className="mt-1 w-full border rounded-lg p-2 text-sm"
+                      value={act.name}
+                      onChange={(e) => updateActivity(m.order, "name", e.target.value)}
+                    />
+                  </label>
+                  <label className="block text-sm font-medium">
+                    Materiales
+                    <textarea
+                      className="mt-1 w-full border rounded-lg p-2 text-sm"
+                      rows={2}
+                      value={act.materials}
+                      onChange={(e) => updateActivity(m.order, "materials", e.target.value)}
+                    />
+                  </label>
+                  <label className="block text-sm font-medium">
+                    Preparación
+                    <textarea
+                      className="mt-1 w-full border rounded-lg p-2 text-sm"
+                      rows={2}
+                      value={act.preparation}
+                      onChange={(e) => updateActivity(m.order, "preparation", e.target.value)}
+                    />
+                  </label>
+                  <label className="block text-sm font-medium">
+                    Consigna completa
+                    <textarea
+                      className="mt-1 w-full border rounded-lg p-2 text-sm"
+                      rows={3}
+                      value={act.instruction}
+                      onChange={(e) => updateActivity(m.order, "instruction", e.target.value)}
+                    />
+                  </label>
+                  <label className="block text-sm font-medium">
+                    Orientación
+                    <textarea
+                      className="mt-1 w-full border rounded-lg p-2 text-sm"
+                      rows={2}
+                      value={act.guidance}
+                      onChange={(e) => updateActivity(m.order, "guidance", e.target.value)}
+                    />
+                  </label>
+                  <label className="block text-sm font-medium">
+                    Pregunta de cierre
+                    <textarea
+                      className="mt-1 w-full border rounded-lg p-2 text-sm"
+                      rows={2}
+                      value={act.closingQuestion}
+                      onChange={(e) => updateActivity(m.order, "closingQuestion", e.target.value)}
+                    />
+                  </label>
+                  <label className="block text-sm font-medium">
+                    Criterio de finalización
+                    <textarea
+                      className="mt-1 w-full border rounded-lg p-2 text-sm"
+                      rows={2}
+                      value={act.completionCriteria}
+                      onChange={(e) => updateActivity(m.order, "completionCriteria", e.target.value)}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="text-sm text-coral-deep underline"
+                    onClick={() => restore(m.order)}
+                  >
+                    Restaurar valores originales
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </section>
 
-      <div className="mt-auto flex gap-2">
+      <div className="mt-4 flex gap-2">
         <button type="button" className="btn btn-primary" onClick={save}>
           Guardar
         </button>
