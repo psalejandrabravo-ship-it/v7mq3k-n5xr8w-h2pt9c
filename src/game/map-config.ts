@@ -23,12 +23,12 @@ export const chestPoint: Pt = { x: 0.68, y: 0.72 };
  * Descanso del pirata según misiones completadas (0 a 5).
  */
 export const pirateRests: Pt[] = [
-  { x: 0.32, y: 0.55 },
-  { x: 0.45, y: 0.45 },
-  { x: 0.58, y: 0.35 },
-  { x: 0.75, y: 0.32 },
-  { x: 0.85, y: 0.50 },
-  { x: 0.70, y: 0.75 },
+  { x: 0.21, y: 0.60 },
+  { x: 0.49, y: 0.48 },
+  { x: 0.47, y: 0.38 },
+  { x: 0.63, y: 0.36 },
+  { x: 0.91, y: 0.54 },
+  { x: 0.60, y: 0.78 },
 ];
 
 /** Un punto de curva entre cada par de descansos. */
