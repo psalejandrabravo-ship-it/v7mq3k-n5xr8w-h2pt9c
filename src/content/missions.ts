@@ -82,6 +82,7 @@ export const missions: Mission[] = [
       materials: "Pelotas blandas, bloques grandes o saquitos, y un canasto o caja.",
       preparation: "Distribuir los objetos en una zona despejada y colocar el canasto en un lugar accesible.",
       instruction: "Las provisiones quedaron esparcidas. Cada integrante recogerá una parte y la llevará al canasto. ¡Caminamos y dejamos espacio a los demás!",
+
       guidance: "Participa solamente el grupo encargado de esta misión. Asegurar que haya objetos suficientes para que todos colaboren. No medir tiempos ni comparar con otros grupos.",
       closingQuestion: "¿Qué pasó cuando todos ayudaron con una parte?",
       completionCriteria: "Las provisiones están recogidas y todos los integrantes colaboraron.",
@@ -160,8 +161,8 @@ export const missions: Mission[] = [
     correctIndex: 2,
     teaching: "¡Eso es! El pirata recogió algunos tesoros y sus compañeros encontraron los demás. Al reunirlos, pudieron guardarlos todos. ¡Lo lograron entre todos!",
     wrongFeedback: "Piensa: cada integrante tiene algo que aportar al cofre. ¿Qué pueden hacer juntos para guardarlos todos?",
-    situationImage: "/recursos/misiones/m5-situacion.png",
-    solutionImage: "/recursos/misiones/m5-solucion.png",
+    situationImage: "https://videos.mirarim.com/Videos%20en%20juegos/Videos%20Tripulacion/Fotos%20misiones/5A%20Situaci%C3%B3n_20261101_095124_0000.png",
+    solutionImage: "https://videos.mirarim.com/Videos%20en%20juegos/Videos%20Tripulacion/Fotos%20misiones/5B%20Soluci%C3%B3n_20261101_095124_0001.png",
     situationAlt: "La tripulación sostiene sus tesoros alrededor de un cofre vacío.",
     solutionAlt: "La tripulación reúne sus aportes en un cofre compartido.",
     activity: {
