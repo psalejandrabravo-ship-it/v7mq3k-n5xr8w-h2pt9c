@@ -181,7 +181,7 @@ export function AdventureApp() {
   const progress = hasProgress(save);
   const title = headerTitle(save);
   const currentMission = save.completed + 1;
-  const isImmersive = save.screen === "story" || save.screen === "cover" || save.screen === "map" || save.screen === "mission";
+  const isImmersive = save.screen === "story" || save.screen === "cover" || save.screen === "map" || save.screen === "mission" || save.screen === "chest";
 
   return (
     <div ref={shell} className="relative flex h-dvh flex-col overflow-hidden bg-indigo text-ink">
@@ -436,7 +436,7 @@ function LeftActions({
   onReset: () => void;
   onLogo: () => void;
 }) {
-  if (save.screen === "cover" || save.screen === "story" || save.screen === "map" || save.screen === "mission") {
+  if (save.screen === "cover" || save.screen === "story" || save.screen === "map" || save.screen === "mission" || save.screen === "chest") {
     return null;
   }
   return (
@@ -479,11 +479,8 @@ function RightActions({
   onVideo: () => void;
   onCover: () => void;
 }) {
-  if (save.screen === "cover" || save.screen === "story" || save.screen === "map" || save.screen === "mission") {
+  if (save.screen === "cover" || save.screen === "story" || save.screen === "map" || save.screen === "mission" || save.screen === "chest") {
     return null;
-  }
-  if (save.screen === "chest") {
-    return null; // El cofre es el control; no hay botón separado
   }
   return (
     <button type="button" className="btn btn-quiet" onClick={onCover}>
