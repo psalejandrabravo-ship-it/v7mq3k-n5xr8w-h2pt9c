@@ -17,6 +17,8 @@ export type Mission = {
   solutionImage: string;
   situationAlt: string;
   solutionAlt: string;
+  exampleImage: string;
+  exampleAlt: string;
   activity: {
     name: string;
     materials: string;
@@ -48,6 +50,8 @@ export const missions: Mission[] = [
     solutionImage: "/recursos/misiones/m1-solucion.png",
     situationAlt: "Pirata intentando mover solo una caja grande de madera.",
     solutionAlt: "Tripulación de niños empujando juntos la caja.",
+    exampleImage: "/recursos/ejemplos/ejemplo-1.jpg",
+    exampleAlt: "Niños transportando una pelota sobre una tela de colores en un aula.",
     activity: {
       name: "Transportamos el tesoro",
       materials: "Una tela resistente o sábana pequeña y una pelota liviana.",
@@ -77,12 +81,13 @@ export const missions: Mission[] = [
     solutionImage: "/recursos/misiones/m2-solucion.png",
     situationAlt: "Pirata sosteniendo una naranja junto a provisiones esparcidas.",
     solutionAlt: "Tripulación recogiendo frutas y provisiones hacia un canasto.",
+    exampleImage: "/recursos/ejemplos/ejemplo-2.jpg",
+    exampleAlt: "Niños recogiendo frutas y provisiones para un canasto compartido.",
     activity: {
       name: "Recogemos las provisiones",
       materials: "Pelotas blandas, bloques grandes o saquitos, y un canasto o caja.",
       preparation: "Distribuir los objetos en una zona despejada y colocar el canasto en un lugar accesible.",
       instruction: "Las provisiones quedaron esparcidas. Cada integrante recogerá una parte y la llevará al canasto. ¡Caminamos y dejamos espacio a los demás!",
-
       guidance: "Participa solamente el grupo encargado de esta misión. Asegurar que haya objetos suficientes para que todos colaboren. No medir tiempos ni comparar con otros grupos.",
       closingQuestion: "¿Qué pasó cuando todos ayudaron con una parte?",
       completionCriteria: "Las provisiones están recogidas y todos los integrantes colaboraron.",
@@ -107,6 +112,8 @@ export const missions: Mission[] = [
     solutionImage: "/recursos/misiones/m3-solucion.png",
     situationAlt: "Pirata pensando frente a un puente de madera roto, con la tripulación.",
     solutionAlt: "Tripulación construyendo juntos un camino con tablones sobre el puente.",
+    exampleImage: "/recursos/ejemplos/ejemplo-3.jpg",
+    exampleAlt: "Niños construyendo un camino de bloques de colores y probándolo con una figura de juguete.",
     activity: {
       name: "Construimos un camino",
       materials: "Bloques grandes y una figura de pirata.",
@@ -136,6 +143,8 @@ export const missions: Mission[] = [
     solutionImage: "/recursos/misiones/m4-solucion.png",
     situationAlt: "Niños sosteniendo tarjetas con dibujos de estrellas, conchas, peces y anclas; una niña con tarjetas de barcos.",
     solutionAlt: "Niños mostrando sus dibujos encontrados y ayudando a una compañera a completar la pareja de barcos.",
+    exampleImage: "/recursos/ejemplos/ejemplo-4.jpg",
+    exampleAlt: "Niños alrededor de una mesa buscando parejas de tarjetas con dibujos y ayudándose con pistas.",
     activity: {
       name: "Encontramos todas las parejas",
       materials: "Un juego con tantas parejas de dibujos como integrantes tenga el grupo. Por ejemplo, para seis niños, seis parejas.",
@@ -165,6 +174,8 @@ export const missions: Mission[] = [
     solutionImage: "https://videos.mirarim.com/Videos%20en%20juegos/Videos%20Tripulacion/Fotos%20misiones/5B%20Soluci%C3%B3n_20261101_095124_0001.png",
     situationAlt: "La tripulación sostiene sus tesoros alrededor de un cofre vacío.",
     solutionAlt: "La tripulación reúne sus aportes en un cofre compartido.",
+    exampleImage: "/recursos/ejemplos/ejemplo-5.jpg",
+    exampleAlt: "Niños ubicando tesoros de papel en una hoja compartida con forma de cofre.",
     activity: {
       name: "El logro es de todos",
       materials: "Una hoja compartida con el cofre y las siluetas de los tesoros. Tesoros de papel para recortar (a color o para colorear). Tijeras infantiles y pegamento. Materiales para colorear, si corresponde.",
