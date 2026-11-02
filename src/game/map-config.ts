@@ -31,7 +31,24 @@ export const pirateRests: Pt[] = [
   { x: 0.60, y: 0.78 },
 ];
 
-/** Un punto de curva entre cada par de descansos. */
+/**
+ * Dónde se queda el pirata, al lado de la parada que toca.
+ * Índice = misiones completadas (0 junto a la 1 … 5 junto al cofre).
+ * El camino dorado sigue usando pirateRests.
+ */
+export const standBeside: Pt[] = [
+  { x: 0.232, y: 0.575 },
+  { x: 0.468, y: 0.47 },
+  { x: 0.598, y: 0.37 },
+  { x: 0.685, y: 0.325 },
+  { x: 0.778, y: 0.515 },
+  { x: 0.63, y: 0.748 },
+];
+
+export function standAt(completed: number): Pt {
+  const index = Math.max(0, Math.min(completed, standBeside.length - 1));
+  return standBeside[index];
+}
 export const legBends: Pt[] = [
   { x: 0.38, y: 0.48 },
   { x: 0.50, y: 0.38 },

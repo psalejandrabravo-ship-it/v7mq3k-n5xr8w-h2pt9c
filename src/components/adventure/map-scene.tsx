@@ -6,8 +6,8 @@ import {
   chestPoint,
   fullTrail,
   legPoints,
-  pirateRests,
   pointOnPolyline,
+  standAt,
   stops,
   trailPathD,
   type Pt,
@@ -44,19 +44,21 @@ export function MapScene({
   fullscreenActive,
   currentMission,
 }: MapSceneProps) {
-  const [pose, setPose] = useState<Pt>(pirateRests[Math.min(completed, pirateRests.length - 1)]);
+  const [pose, setPose] = useState<Pt>(standAt(completed));
   const moving = pending !== null;
   const finishRef = useRef(onFinishMove);
   finishRef.current = onFinishMove;
 
   useEffect(() => {
     if (!pending) {
-      setPose(pirateRests[Math.min(completed, pirateRests.length - 1)]);
+      setPose(standAt(completed));
       return;
     }
-    const samples = legPoints(pending.from);
+    const along = legPoints(pending.from);
+    const end = standAt(pending.to);
+    const samples = [standAt(pending.from), ...along, end];
     if (prefersReducedMotion() || samples.length < 2) {
-      setPose(pirateRests[pending.to] ?? samples[samples.length - 1]);
+      setPose(end);
       finishRef.current();
       return;
     }

@@ -763,11 +763,11 @@ export function VideoScene({
   }, []);
 
   return (
-    <div className="relative h-full w-full bg-black flex flex-col">
+    <div className="relative h-full w-full bg-black">
       <video
         ref={videoRef}
         src={FINAL_VIDEO}
-        className="flex-1 w-full object-contain"
+        className="absolute inset-x-3 top-3 h-[calc(100%-4.75rem)] w-[calc(100%-1.5rem)] object-contain"
         playsInline
         onEnded={onSkip}
       />
@@ -782,7 +782,7 @@ export function VideoScene({
           Reproducir video
         </button>
       )}
-      <div className="flex-shrink-0 flex justify-center gap-2 p-3 bg-black/40">
+      <div className="absolute inset-x-0 bottom-0 flex justify-center gap-2 bg-black/70 p-3">
         <button type="button" className="text-white bg-white/15 px-4 py-2 rounded-full text-sm" onClick={onSkip}>
           Saltar video
         </button>
